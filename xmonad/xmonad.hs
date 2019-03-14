@@ -1,15 +1,16 @@
 import XMonad
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageDocks (ToggleStruts(..),avoidStruts,docks,manageDocks, docksEventHook)
 import XMonad.Hooks.FadeInactive
 import XMonad.Util.EZConfig
 import XMonad.ManageHook
 import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.EwmhDesktops
 import qualified XMonad.Util.Loggers as Logr
 
-import XMonad.Hooks.SetWMName --import XMonad for java
-import XMonad.Layout.Spacing -- for space beetwean a tile
+import XMonad.Hooks.SetWMName
+import XMonad.Layout.Spacing
 
 import System.IO
 
@@ -18,31 +19,34 @@ import qualified Graphics.X11.ExtraTypes.XF86 as XF86
 import qualified XMonad.Util.Brightness as Bright
 
 
-myXmonadBar = "dzen2 -x '500' -y '0' -h '24' -w '1420' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
-myStatusBar = "conky -c /home/my_user/.xmonad/.conky_dzen | dzen2 -x '2080' -w '1040' -h '24' -ta 'r' -bg '#1B1D1E' -fg '#FFFFFF' -y '0'"
+--myXmonadBar = "dzen2 -x '0' -y '0' -h '24' -w '1420' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
+myXmonadBar = "dzen2 -dock -x '0' -w '1920' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
 
 main = do
    dzenLeftBar <- spawnPipe myXmonadBar
-   dzenRightBar <- spawnPipe myStatusBar
-   -- xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmobarrc"
    xmonad $ defaultConfig
      { terminal    = myTerminal
+     , logHook     = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xeeeeeeee
      , modMask     = myModMask
      , borderWidth = myBorderWidth
      , workspaces  = myWorkspace
      --, manageHook  = myManagehook
+     , layoutHook  = avoidStruts myLayoutHook
+     --, layoutHook  = spacing 10 $ avoidStruts myLayoutHook
      , manageHook  = manageDocks <+> manageHook defaultConfig
-     --, layoutHook  = avoidStruts  $ layoutHook defaultConfig
-     , layoutHook  = spacing 17 $ layoutHook defaultConfig  --Tall 1 (3/100) (1/2) -- windows spacign on 15 piksels
-     --, layoutHook  = layoutHook defaultConfig  --Tall 1 (3/100) (1/2) -- windows spacign on 15 piksels
-     , handleEventHook = handleEventHook defaultConfig <+> docksEventHook
+     , handleEventHook = handleEventHook defaultConfig <+> docksEventHook <+> fullscreenEventHook
      , startupHook = setWMName "LG3D"
-     , normalBorderColor        = "#001230" -- "#001122" --"#222222" -- RGBA
-     , focusedBorderColor       = "#00FFFF" --"#00FFFF"
-     , logHook     = myLogHook dzenLeftBar >> fadeInactiveLogHook 0xeeeeeeee--0xdddddddd
+     , normalBorderColor        = "#001230"
+     , focusedBorderColor       = "#00FFFF"
      } `additionalKeys` myKeys
 
 
+myLayoutHook  = tiled ||| Mirror tiled ||| Full
+  where
+     tiled   = Tall nmaster delta ratio
+     nmaster = 1
+     ratio   = 1/2
+     delta   = 3/100
 myTerminal    = "/usr/bin/gnome-terminal"
 myModMask     = mod4Mask -- Alt клавиша (или Super_L)
 myBorderWidth = 0
@@ -127,6 +131,7 @@ myLogHook h = dynamicLogWithPP $ defaultPP
       , ppExtras            =   [ (Logr.wrapL " Time: " "" (Logr.dzenColorL "#00FF00" "#1B1D1E" $ Logr.date "%R"))
                                 , (Logr.wrapL " Data: " "" (Logr.dzenColorL "#00FF00" "#1B1D1E" $ Logr.date "%d %A [%m]"))
                                 , (Logr.wrapL " Battery: " "" (Logr.dzenColorL "#FF00AA" "#1B1D1E" $ Logr.battery))
+                                --, (Logr.wrapL "[" "]" (Logr.dzenColorL "#00AAAA" "#1B1D1E" $ (Logr.logCmd "slstatus -s")))
                                 ]
       , ppTitle             =   (" " ++) . dzenColor "#FFAA00" "#1B1D1E" . shorten 40 . dzenEscape
       , ppOrder             =   \(ws:wtall:titl:extr) -> [ws,wtall]++extr++[titl]

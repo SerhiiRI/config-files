@@ -1,0 +1,52 @@
+#file .Xdefaults
+urxvt*color0:    #000000
+urxvt*color1:    #C00000
+urxvt*color2:    #00C000
+urxvt*color3:    #C0C000
+urxvt*color4:    #0C00C0
+urxvt*color5:    #AA00AA
+urxvt*color6:    #00AAAA
+urxvt*color7:    #FFFFFF
+
+urxvt*color8:    #212121
+urxvt*color9:    #FF8080
+urxvt*color10:    #80FF80
+urxvt*color11:    #FFFF88
+urxvt*color12:    #99CCFF
+urxvt*color13:    #B14CC2
+urxvt*color14:    #9BFFFF
+urxvt*color15:    #D0D0D0
+
+
+URxvt*saveLines: 5000
+#URxvt.font: xft:Clean:size=9
+URxvt.font: -*-clean-medium-r-*-*-12-*-*-*-*-*-*-*
+URxvt.boldFont: -*-clean-bold-r-*-*-12-*-*-*-*-*-*-*
+#URxvt.italicFont:-*-clean-medium-r-*-*-12-*-*-*-*-*-*-* 
+#URxvt.boldItalicFont: -*-clean-medium-r-*-*-12-*-*-*-*-*-*-*
+
+# убираем скролл и границы
+URxvt*scrollBar: false
+
+# цвет фона и текста
+URxvt*background: #212121
+URxvt*foreground: #C0C0C0
+
+#urxvt будет искать скрипты сначала в этой директории, потом в /usr/lib/urxvt/perl
+URxvt.perl-lib: /home/brainsburn/.config/urxvt/perl
+
+#clickable urls
+URxvt.perl-ext-common:  default,matcher,url-select,tabbedex
+URxvt.matcher.button:	1
+
+#url-select without mouse
+URxvt.urlLauncher:     firefox
+URxvt.underlineURLs:   true
+URxvt.keysym.M-u:      perl:url-select:select_next
+
+# цвета табов
+URxvt.tabbed.new-button: no
+URxvt.tabbed.tabbar-fg: 15
+URxvt.tabbed.tabbar-bg: 8
+URxvt.tabbed.tab-fg:    8
+URxvt.tabbed.tab-bg:    14

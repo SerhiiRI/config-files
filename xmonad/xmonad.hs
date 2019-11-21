@@ -91,8 +91,7 @@ myKeys =
     ((mod4Mask .|. shiftMask, xK_o), spawn "opera"),
     ((mod4Mask .|. shiftMask, xK_v), spawn "vivaldi"),
     ((mod4Mask .|. shiftMask, xK_r), spawn "rhythmbox"),
-    ((mod4Mask .|. shiftMask, xK_s), spawn "steam"),
-    ((mod4Mask .|. shiftMask, xK_p), spawn "gnome-screenshot -a")
+    ((mod4Mask .|. shiftMask, xK_s), spawn "gnome-screenshot -a")
   ]
   ++
   [

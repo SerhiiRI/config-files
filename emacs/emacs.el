@@ -118,13 +118,18 @@
 (global-set-key (kbd "M-<down>") 'move-text-down)
 
 ;;; lisp-mode
-(defun lisps-configuration ()
-  "the sets of mods, must be enabled in lisps languages"
+(defun lisp-mode-hook ()
+  "enable some plugins after init mode"
   (paredit-mode)
-  (rainbow-delimiters))
+  (rainbow-delimiters-mode))
+(add-hook 'emacs-lisp-mode-hook 'lisp-mode-hook)
+(add-hook 'lisp-mode-hook 'lisp-mode-hook)
+(add-hook 'clojure-mode-hook 'lisp-mode-hook)
+;;; also you can add hook in lambda, thats way:
+;; (add-hook 'emacs-lisp-mode-hook
+;; 	  (lambda ()
+;; 	    (add-hook 'paredit-mode 'rainbow-delimiters-mode)))
 
-(add-hook 'lisp-mode 'lisps-configuration)
-(add-hook 'clojure-mode 'lisps-configuration)
 
 ;; Dashboarad setup
 (require 'dashboard)

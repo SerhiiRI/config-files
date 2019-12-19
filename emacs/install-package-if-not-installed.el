@@ -1,5 +1,5 @@
 ; list the packages you want
-(setq package-list '(package1 package2))
+(setq package-list '(markdown-mode use-package dashboard smex neotree auto-complete cider paredit htmlize magit clojure-mode rainbow-delimiters))
 
 ; list the repositories containing them
 (setq package-archives '(("elpa" . "http://tromey.com/elpa/")

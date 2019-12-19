@@ -1,3 +1,8 @@
+(require 'package)
+
+(load "package")
+(package-initialize)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -5,25 +10,34 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
- '(custom-enabled-themes (quote (misterioso)))
+ '(ansi-color-names-vector
+   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
+ '(custom-enabled-themes (quote (dracula)))
+ '(custom-safe-themes
+   (quote
+    ("947190b4f17f78c39b0ab1ea95b1e6097cc9202d55c73a702395fc817f899393" default)))
  '(line-number-mode t)
+ '(package-archives
+   (quote
+    (("gnu" . "https://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")
+     ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (meghanada smex neotree auto-complete cider paredit htmlize doom-themes haskell-mode python-mode magit clojure-mode rainbow-delimiters))))
+    (markdown-mode use-package dashboard smex neotree auto-complete cider paredit htmlize magit clojure-mode rainbow-delimiters))))
+
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(load "package")
-(package-initialize)
-
 
 ;; emacs visual configurations 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
-(menu-bar-mode 1)
+(menu-bar-mode -1)
 
 ;; enable slelction to X
 (delete-selection-mode t)
@@ -44,19 +58,16 @@
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
 
-
 ;; smex config
 (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 
-
 ;; ido naviage filesystems
 (ido-mode t)
 (setq ido-enable-flex-matching t
       ido-use-virtual-buffers t)
-
 
 ;; enable line numbers
 (setq column-number-mode t)
@@ -65,33 +76,9 @@
 (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
-
 ;; auto-complete
 (require 'auto-complete-config)
 (ac-config-default)
-
-;; python
-(setq python-shell-interpreter "C:\\Users\\riznychuk\\AppData\\Local\\Programs\\Python\\Python37\\python.exe")
-
-;; java config meghanada
-(require 'meghanada)
-(add-hook 'java-mode-hook
-          (lambda ()
-            ;; meghanada-mode on
-            (meghanada-mode t)
-            (flycheck-mode +1)
-            (setq c-basic-offset 2)
-            ;; use code format
-            (add-hook 'before-save-hook 'meghanada-code-beautify-before-save)))
-(cond
-   ((eq system-type 'windows-nt)
-    (setq meghanada-java-path (expand-file-name "bin/java.exe" (getenv "JAVA_HOME")))
-    (setq meghanada-maven-path "mvn.cmd"))
-   (t
-    (setq meghanada-java-path "java")
-    (setq meghanada-maven-path "mvn")))
-
-
 
 ;; move line down/up
 (defun move-text-internal (arg)
@@ -130,3 +117,19 @@
 (global-set-key (kbd "M-<up>") 'move-text-up)
 (global-set-key (kbd "M-<down>") 'move-text-down)
 
+;;; lisp-mode
+(defun lisps-configuration ()
+  "the sets of mods, must be enabled in lisps languages"
+  (paredit-mode)
+  (rainbow-delimiters))
+
+(add-hook 'lisp-mode 'lisps-configuration)
+(add-hook 'clojure-mode 'lisps-configuration)
+
+;; Dashboarad setup
+(require 'dashboard)
+(dashboard-setup-startup-hook)
+;; Or if you use use-package
+(use-package dashboard
+  :ensure t
+  :config (dashboard-setup-startup-hook))

@@ -87,11 +87,10 @@ myKeys =
   [
     ((0, 0xFF61), spawn "scrot -q 1 $HOME/pictures/screenshots/%Y-%m-%d-%H:%M:%S.png"),
     ((mod4Mask .|. shiftMask, xK_n), spawn "nautilus -w"),
-    ((mod4Mask .|. shiftMask, xK_t), spawn "thunar"),
     ((mod4Mask .|. shiftMask, xK_o), spawn "opera"),
     ((mod4Mask .|. shiftMask, xK_v), spawn "vivaldi"),
     ((mod4Mask .|. shiftMask, xK_r), spawn "rhythmbox"),
-    ((mod4Mask .|. shiftMask, xK_s), spawn "gnome-screenshot -a")
+    ((mod4Mask .|. shiftMask, xK_s), spawn "gnome-screenshot -i")
   ]
   ++
   [
@@ -102,13 +101,13 @@ myKeys =
     ((0, XF86.xF86XK_MonBrightnessUp), Bright.increase),       -- Increase screen brightness SUPER + 8/9
     ((0, XF86.xF86XK_MonBrightnessDown), Bright.decrease)
   ]
-  ++
-  [
-    ((0, XF86.xF86XK_AudioNext), spawn "rhythmbox-client --next"),
-    ((0, XF86.xF86XK_AudioPrev), spawn "rhythmbox-client --previous"),
-    ((0, XF86.xF86XK_AudioStop), spawn "rhythmbox-client --play-pause"),
-    ((0, XF86.xF86XK_AudioPlay), spawn "rhythmbox-client --play-pause")
-  ]
+  -- ++
+  -- [
+  --   ((0, XF86.xF86XK_AudioNext), spawn "rhythmbox-client --next"),
+  --   ((0, XF86.xF86XK_AudioPrev), spawn "rhythmbox-client --previous"),
+  --   ((0, XF86.xF86XK_AudioStop), spawn "rhythmbox-client --play-pause"),
+  --   ((0, XF86.xF86XK_AudioPlay), spawn "rhythmbox-client --play-pause")
+  -- ]
   -- ++
   -- -- | MOCP music set
   -- [

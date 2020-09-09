@@ -117,6 +117,14 @@
 (global-set-key (kbd "M-<up>") 'move-text-up)
 (global-set-key (kbd "M-<down>") 'move-text-down)
 
+
+;;; emacs lisp eval and replace
+(defun replace-last-sexp ()
+    (interactive)
+    (let ((value (eval (preceding-sexp))))
+      (kill-sexp -1)
+      (insert (format "%S" value))))
+
 ;;; lisp-mode
 (defun lisp-mode-hook ()
   "enable some plugins after init mode"

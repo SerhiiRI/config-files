@@ -1,0 +1,12 @@
+* Monospace fonts
+
+ Fully open source Monospaced fonts:
++ [[https://github.com/adobe-fonts/source-code-pro][Source Code Pro]] 
++ [[https://github.com/googlefonts/Inconsolata][Inconsolata]] - good for lisp
++ [[https://www.dafont.com/code-new-roman.font][Code new roman]]
++ [[https://sourcefoundry.org/hack/][Hack]] - clean minimalistic, and readable font for js,c...
++ [[https://github.com/JetBrains/JetBrainsMono][JetBrain monospace]]
++ [[https://design.ubuntu.com/font/][Ubuntu mono]]
++ [[http://terminus-font.sourceforge.net][terminus]] - blocky style font
++ [[https://madmalik.github.io/mononoki/][Monoki]]
++ [[https://github.com/googlefonts/spacemono][Space Mono]]

@@ -3,28 +3,22 @@
 (load "package")
 (package-initialize)
 
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
- '(custom-enabled-themes (quote (dracula)))
- '(custom-safe-themes
-   (quote
-    ("947190b4f17f78c39b0ab1ea95b1e6097cc9202d55c73a702395fc817f899393" default)))
- '(line-number-mode t)
+ '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-archives
-   (quote
-    (("gnu" . "https://elpa.gnu.org/packages/")
-     ("melpa" . "https://melpa.org/packages/")
-     ("melpa-stable" . "https://stable.melpa.org/packages/"))))
+   '(("gnu" . "https://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")))
  '(package-selected-packages
-   (quote
-    (markdown-mode use-package dashboard smex neotree auto-complete cider paredit htmlize magit clojure-mode rainbow-delimiters))))
+   '(org-bullets visual-regexp dash-functional typescript-mode spacemacs-theme markdown-mode use-package dashboard smex neotree auto-complete cider paredit htmlize magit clojure-mode rainbow-delimiters dracula-theme monokai-theme github-theme cyberpunk-theme sublime-themes writeroom-mode)))
+;; (dolist (package '(org-bullets visual-regexp dash-functional typescript-mode spacemacs-theme markdown-mode use-package dashboard smex neotree auto-complete cider paredit htmlize magit clojure-mode rainbow-delimiters dracula-theme monokai-theme github-theme cyberpunk-theme sublime-themes writeroom-mode))
+;;  (unless (package-installed-p package)
+;;    (package-install package))
+;;    (require package))
 
 
 (custom-set-faces
@@ -32,14 +26,24 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
+
+
 
 ;; emacs visual configurations 
 (scroll-bar-mode -1)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
+(tool-bar-mode   -1)
+(menu-bar-mode   -1)
 
-;; enable slelction to X
+;; enable line numbers
+(setq column-number-mode t)
+
+;; disable temporary files
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
+
+;; enable selection to X
 (delete-selection-mode t)
 (transient-mark-mode t)
 (setq x-select-enable-clipboard t)
@@ -57,6 +61,7 @@
 (global-set-key (kbd "C-\"") '(lambda () (interactive) (eww "www.google.com.pl")))
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
+(global-set-key (kbd "C-c t") 'neotree-toggle)
 
 ;; smex config
 (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
@@ -69,16 +74,10 @@
 (setq ido-enable-flex-matching t
       ido-use-virtual-buffers t)
 
-;; enable line numbers
-(setq column-number-mode t)
-
-;; disable temporary files
-(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
 ;; auto-complete
 (require 'auto-complete-config)
 (ac-config-default)
+
 
 ;; move line down/up
 (defun move-text-internal (arg)
@@ -101,48 +100,83 @@
        (when (or (< arg 0) (not (eobp)))
             (transpose-lines arg))
        (forward-line -1)))))
-
 (defun move-text-down (arg)
    "Move region (transient-mark-mode active) or current line
   arg lines down."
    (interactive "*p")
    (move-text-internal arg))
-
 (defun move-text-up (arg)
    "Move region (transient-mark-mode active) or current line
   arg lines up."
    (interactive "*p")
    (move-text-internal (- arg)))
-
-(global-set-key (kbd "M-<up>") 'move-text-up)
-(global-set-key (kbd "M-<down>") 'move-text-down)
-
-
-;;; emacs lisp eval and replace
-(defun replace-last-sexp ()
-    (interactive)
-    (let ((value (eval (preceding-sexp))))
-      (kill-sexp -1)
-      (insert (format "%S" value))))
+(global-set-key (kbd "M-S-<up>") 'move-text-up)
+(global-set-key (kbd "M-S-<down>") 'move-text-down)
 
 ;;; lisp-mode
 (defun lisp-mode-hook ()
   "enable some plugins after init mode"
   (paredit-mode)
+  (prettify-symbols-mode)
   (rainbow-delimiters-mode))
 (add-hook 'emacs-lisp-mode-hook 'lisp-mode-hook)
 (add-hook 'lisp-mode-hook 'lisp-mode-hook)
 (add-hook 'clojure-mode-hook 'lisp-mode-hook)
-;;; also you can add hook in lambda, thats way:
-;; (add-hook 'emacs-lisp-mode-hook
-;; 	  (lambda ()
-;; 	    (add-hook 'paredit-mode 'rainbow-delimiters-mode)))
 
+;;; recentf package keep paths of your last edited files
+(recentf-mode 1)
+(setq recentf-max-menu-items 30)
+(setq recentf-max-saved-items 50)
+(defun ido-recentf-open ()
+  "Use `ido-completing-read' to \\[find-file] a recent file"
+  (interactive)
+  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+    (message "Aborting")))
+(global-set-key (kbd "C-c C-b") 'recentf-open-files)
+(global-set-key (kbd "C-c C-r") 'ido-recentf-open)
 
-;; Dashboarad setup
+;;; dashboard configuration 
 (require 'dashboard)
-(dashboard-setup-startup-hook)
+(setq dashboard-banner-logo-title "* Live Long And Prosper *")
+(setq dashboard-startup-banner "~/Spock.png")
+(setq dashboard-page-separator "\n\n")
+(setq dashboard-set-init-info nil)
+(setq dashboard-center-content t)
+(setq dashboard-show-shortcuts t)
+(setq dashboard-set-footer nil)
+(setq dashboard-items '((recents  . 13)
+			(bookmarks . 10)
+			(agenda)))
+;; (dashboard-setup-startup-hook)
 ;; Or if you use use-package
 (use-package dashboard
   :ensure t
   :config (dashboard-setup-startup-hook))
+
+;;; whiteroom mode
+(with-eval-after-load 'writeroom-mode
+  (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
+  (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
+  (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width))
+
+;; dash-functions
+(eval-after-load 'dash '(dash-enable-font-lock))
+
+;; org-mode
+(define-key global-map (kbd "C-c l") 'org-store-link)
+(define-key global-map (kbd "C-c a") 'org-agenda)
+(setq org-agenda-files (list "C:/space/agenda.org"))
+(setq org-log-done t)
+
+(require 'org-bullets)
+;; (setq org-bullets-bullet-list '("α" "β" "γ" "δ" "ε" "ζ" "η" "λ"))
+;; (setq org-bullets-bullet-list '("●" "◉" "○" "◆" "◇"))
+;; (setq org-bullets-bullet-list '("◆"))
+(setq org-bullets-bullet-list '("●"))
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;;; repalace regular regexp on visula regexp
+(require 'visual-regexp)
+(define-key global-map (kbd "C-c r") 'vr/replace)
+(define-key global-map (kbd "C-c q") 'vr/query-replace)

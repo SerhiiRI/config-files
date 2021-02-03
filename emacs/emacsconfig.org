@@ -1,0 +1,295 @@
+* Main Emacs Configuration
+  Configuration of this block contains only non-package configuration, or only package system configuration
+  
+** Emacs bars
+   Show or hide emacs UΙ component. 
+   ~scroll-bar-mode~ - frame scroll bar
+   ~tool-bar-mode~ - stricted emacs editiing functionality(clip/paste etc..)
+   ~menu-bar-mode~ - frame utility (file,view...)
+   #+begin_src emacs-lisp
+     (scroll-bar-mode -1)
+     (tool-bar-mode   -1)
+     (menu-bar-mode   -1)
+   #+end_src
+
+** Modebar
+   Enable line numbers in mode bars
+   #+begin_src emacs-lisp
+     (setq column-number-mode t)
+   #+end_src
+
+** Behavior
+   Disable backup file generation
+   #+begin_src emacs-lisp
+     (setq custom-safe-themes t)
+     (setq make-backup-files nil)
+     (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+     (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+   #+end_src
+   X window clipboard buffer.
+   #+begin_src emacs-lisp
+     (delete-selection-mode t)
+     (transient-mark-mode t)
+     (setq x-select-enable-clipboard t)
+   #+end_src
+
+** Text enhanches
+   Display empty line
+   #+begin_src emacs-lisp
+     (setq-default indicate-empty-lines t)
+     (when (not indicate-empty-lines)
+	(toggle-indicate-empty-lines))
+   #+end_src
+   
+** Global keymap
+   Global function 
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
+     (global-set-key (kbd "C-c w") 'writeroom-mode)
+     (global-set-key (kbd "C-'") '(lambda () (interactive) (browse-url "www.google.com.pl")))
+     ;; (global-set-key (kbd "C-\"") '(lambda () (interactive) (eww "www.google.com.pl")))
+     ;; (global-set-key (kbd "C-x g") 'magit-status)
+     ;; (global-set-key (kbd "<f8>") 'neotree-toggle)
+     ;; (global-set-key (kbd "C-c t") 'neotree-toggle)
+   #+end_src
+
+** Autocomplete 
+   #+begin_src emacs-lisp
+     (use-package auto-complete-config
+       :config(ac-config-default))
+   #+end_src
+   
+** Text manipulation
+   In this block you can locate functions which help me editing text or other things
+*** Text moving up/down
+    #+begin_src emacs-lisp
+      (defun move-text-internal (arg)
+	(cond
+	 ((and mark-active transient-mark-mode)
+	  (if (> (point) (mark))
+	      (exchange-point-and-mark))
+	  (let ((column (current-column))
+		(text (delete-and-extract-region (point) (mark))))
+	    (forward-line arg)
+	    (move-to-column column t)
+	    (set-mark (point))
+	    (insert text)
+	    (exchange-point-and-mark)
+	    (setq deactivate-mark nil)))
+	 (t
+	  (beginning-of-line)
+	  (when (or (> arg 0) (not (bobp)))
+	    (forward-line)
+	    (when (or (< arg 0) (not (eobp)))
+	      (transpose-lines arg))
+	    (forward-line -1)))))
+      (defun move-text-down (arg)
+	"Move region (transient-mark-mode active) or current line
+	arg lines down."
+	(interactive "*p")
+	(move-text-internal arg))
+      (defun move-text-up (arg)
+	"Move region (transient-mark-mode active) or current line
+	arg lines up."
+	(interactive "*p")
+	(move-text-internal (- arg)))
+      (global-set-key (kbd "M-S-<up>") 'move-text-up)
+      (global-set-key (kbd "M-S-<down>") 'move-text-down)
+    #+end_src
+    
+* Magit
+  #+begin_src emacs-lisp
+    (use-package magit
+      :ensure t
+      :defer 3
+      :bind (("C-x g" . magit-status)))
+  #+end_src
+
+* Neotree
+    #+begin_src emacs-lisp
+      (use-package neotree 
+	:ensure t
+	:defer 3
+	:bind (("<f8>" . neotree-toggle)
+	       ("C-c t" . neotree-toggle)))
+    #+end_src
+  
+* SMEX
+  #+begin_src emacs-lisp
+    (use-package smex
+      :after package
+      :ensure t
+      :init
+      (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
+      (smex-initialize)
+      (global-set-key (kbd "M-x") 'smex)
+      (global-set-key (kbd "M-X") 'smex-major-mode-commands))
+  #+end_src
+
+* IDO
+  #+begin_src emacs-lisp
+    (use-package ido
+      :config
+      (setq ido-enable-flex-matching t
+	    ido-use-virtual-buffers t)
+      (ido-mode t))
+  #+end_src
+  
+* Lisps languages
+  #+begin_src emacs-lisp
+    
+    (defun lisp-mode-hook ()
+      "enable some plugins after init mode"
+      (paredit-mode)
+      (prettify-symbols-mode)
+      (rainbow-delimiters-mode))
+  #+end_src
+** Emacs lisp
+*** Emacs mode   
+   #+begin_src emacs-lisp
+     (use-package elisp-mode
+	:defer t
+	:config (add-hook 'emacs-lisp-mode-hook 'lisp-mode-hook))
+   #+end_src
+*** Dash library 
+    #+begin_src emacs-lisp
+      (use-package dash
+	:no-require t
+	:after dash
+	:config
+	(dash-enable-font-lock))
+    #+end_src
+** Main lisp Mode
+   #+begin_src emacs-lisp
+   (use-package lisp-mode
+      :defer t
+      :config (add-hook 'lisp-mode-hook 'lisp-mode-hook))  
+   #+end_src
+** Clojure
+   #+begin_src emacs-lisp
+     (defun clojure-lisp-pretty-symbols ()
+       "Make some word or string show as pretty Unicode symbols"
+       (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
+				      ("fn" . ?λ)
+				      ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘
+				      ;; ("->" . ?→)
+				      ;; ("->>" . ?↠)
+				      ;; ("=>" . ?⇒)
+				      ("/=" . ?≠)("!=" . ?≠)
+				      ("==" . ?≡)("not" . ?!)
+				      ("<=" . ?≤)(">=" . ?≥)
+				      ("comp" . ?υ)("partial" . ?ρ)
+				      ("and" . ?∧)("&&" . ?∧)
+				      ("or" . ?∨)("||" . ?∨))))
+     (defun personal-clojure-mode-hook ()
+       (clojure-lisp-pretty-symbols)
+       (lisp-mode-hook))
+     (use-package clojure-mode
+       :defer t
+       :config (add-hook 'clojure-mode-hook 'personal-clojure-mode-hook))
+   #+end_src
+* Recentf
+  recentf package keep paths of your last edited files
+  #+begin_src emacs-lisp
+  (defun ido-recentf-open ()
+    "Use `ido-completing-read' to \\[find-file] a recent file"
+    (interactive)
+    (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+      (message "Aborting")))
+  
+  (use-package recentf
+     :bind (("C-c C-b" . recentf-open-files)
+            ("C-c C-r" . ido-recentf-open))
+     :config (setq recentf-max-menu-items 30
+                   recentf-max-saved-items 50)
+     (recentf-mode 1))
+  #+end_src
+
+* Writeroom mode
+  #+begin_src emacs-lisp
+  (use-package writeroom-mode
+     :ensure t
+     :bind (("C-M-<" . writeroom-decrease-width)
+            ("C-M->" . writeroom-increase-width)
+	    ("C-M-=" . writeroom-adjust-width)))
+  #+end_src
+
+* Dashboard
+  #+begin_src emacs-lisp
+  (use-package dashboard
+     :demand t
+     :ensure t
+     ;; :diminish dashboard-mode
+     :init
+     (setq dashboard-banner-logo-title "* Live Long And Prosper *")
+     (setq dashboard-startup-banner "~/Spock.png")
+     (setq dashboard-page-separator "\n\n")
+     (setq dashboard-set-init-info nil)
+     (setq dashboard-center-content t)
+     (setq dashboard-show-shortcuts t)
+     (setq dashboard-set-footer nil)
+     (setq dashboard-items '((recents  . 13)(bookmarks . 10)(agenda)))
+     :config
+     (dashboard-setup-startup-hook))
+  #+end_src
+* Visual Regular expression
+  Replace regular regexp on visula regexp
+  #+begin_src emacs-lisp
+  (use-package visual-regexp
+    :bind (("C-c r" . vr/replace)
+           ("C-c q" . vr/query-replace)))
+  #+end_src
+* Org mode
+** Bullet mode
+   Bullet replace header Symbol's on other markup specified in variable ~org-bullets-bullet-list~
+   #+begin_src emacs-lisp
+     (use-package org-bullets
+	:commands org-mode
+	:after org
+	:config
+	;; (setq org-bullets-bullet-list '("α" "β" "γ" "δ" "ε" "ζ" "η" "λ"))
+	;; (setq org-bullets-bullet-list '("●" "◉" "○" "◆" "◇"))
+	;; (setq org-bullets-bullet-list '("◆"))
+	(setq org-bullets-bullet-list '("●"))
+	;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+	(org-bullets-mode))
+   #+end_src
+** LaTeX conf
+   #+begin_src emacs-lisp
+     ;; (require 'ox-latex)
+     (setq org-latex-listings t)
+     (add-to-list 'org-latex-packages-alist '("" "listings"))
+     (add-to-list 'org-latex-packages-alist '("" "color"))
+     ;; (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+     ;; (setq org-latex-listings 'minted
+     ;;       org-latex-pdf-process
+     ;;       (mapcar (lambda (s) (replace-regexp-in-string "%latex " "%latex --shell-escape " s)) org-latex-pdf-process))
+
+     ;; '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+     ;;   "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
+   #+end_src
+
+** Main configuration
+   #+begin_src emacs-lisp
+
+     (use-package org
+       :bind (("C-c l" . org-store-link)
+	      ("C-c a" . org-agenda))
+       :init (setq org-agenda-files (list "C:/space/agenda.org")
+		   org-format-latex-options (plist-put org-format-latex-options :scale 2.3)
+		   org-hide-emphasis-markers t
+		   org-log-done t
+		   org-src-tab-acts-natively t)
+       :config 
+       (add-hook 'org-mode-hook (lambda ()
+				  ;; (xah-math-input-mode)
+				  (org-bullets-mode)
+				  ;; (set-face-attribute 'org-block-begin-line nil :foreground (face-background 'org-block-begin-line nil 'default))
+				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
+				  )))
+   #+end_src
+   
+   
+

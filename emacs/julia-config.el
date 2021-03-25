@@ -2,6 +2,8 @@
 (load "package")
 (package-initialize)
 
+(setq custom-safe-themes t)
+
 (setq repository-list
   '(("gnu" . "https://elpa.gnu.org/packages/")
     ("melpa" . "https://melpa.org/packages/")))
@@ -11,9 +13,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(dracula))
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-archives repository-list)
- '(package-selected-packages '()))
+ '(package-selected-packages 'nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -21,6 +24,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:background nil)))))
+
+(load-theme 'dracula t)
 
 ;;; QUICK INSTALL PACKAGES
 ;; (dolist (package '(visual-regexp markdown-mode neotree auto-complete paredit htmlize rainbow-delimiters dracula-theme slime))
@@ -50,10 +55,20 @@
 ;;;;;;;;;;;;;;;;
 
 ;;; KEYBINDGS
-;; (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
-;; (global-set-key (kbd "<f8>") 'neotree-toggle)
+(global-set-key (kbd "C-c n") 'display-line-numbers-mode)
+(global-set-key (kbd "<f8>") 'neotree-toggle)
 
 ;;; IVY MODE
-;; (ivy-mode 1)
-;; (setq ivy-use-virtual-buffers t)
-;; (setq enable-recursive-minibuffers t)
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(setq enable-recursive-minibuffers t)
+
+;;; LISP MODE CONFIGURATIONS
+(defun lisp-mode-hook ()
+      "enable some plugins after init mode"
+      (paredit-mode)
+      (rainbow-delimiters-mode))
+(add-hook 'emacs-lisp-mode-hook 'lisp-mode-hook)
+(add-hook 'lisp-mode-hook 'lisp-mode-hook)
+
+(setq inferior-lisp-program "sbcl")

@@ -16,7 +16,8 @@
  '(custom-enabled-themes '(dracula))
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-archives repository-list)
- '(package-selected-packages 'nil))
+ '(package-selected-packages
+   '(cider visual-regexp slime-volleyball slime rainbow-delimiters paredit neotree markdown-mode ivy htmlize dracula-theme auto-complete)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -54,21 +55,23 @@
 ;;; PACKAGES ;;;
 ;;;;;;;;;;;;;;;;
 
-;;; KEYBINDGS
+;KEYBINDGS
 (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
 
-;;; IVY MODE
+;IVY MODE
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
 (setq enable-recursive-minibuffers t)
 
-;;; LISP MODE CONFIGURATIONS
+
 (defun lisp-mode-hook ()
       "enable some plugins after init mode"
       (paredit-mode)
       (rainbow-delimiters-mode))
+(add-hook 'clojure-mode-hook 'lisp-mode-hook)
 (add-hook 'emacs-lisp-mode-hook 'lisp-mode-hook)
 (add-hook 'lisp-mode-hook 'lisp-mode-hook)
+
 
 (setq inferior-lisp-program "sbcl")

@@ -1,6 +1,11 @@
 * Main Emacs Configuration
   Configuration of this block contains only non-package configuration, or only package system configuration
-  
+
+** always Split new buffer vertical  
+   #+begin_src emacs-lisp
+     ;; (setq split-height-threshold nil
+     ;;       split-width-threshold 160)
+   #+end_src
 ** Emacs bars
    Show or hide emacs UΙ component. 
    ~scroll-bar-mode~ - frame scroll bar
@@ -97,6 +102,12 @@
       (global-set-key (kbd "M-S-<down>") 'move-text-down)
     #+end_src
     
+* Ivy
+  #+begin_src emacs-lisp 
+  ;; (ivy-mode 1)
+  ;;   (setq ivy-use-virtual-buffers t)
+  ;; (setq enable-recursive-minibuffers t)
+  #+end_src
 * Magit
   #+begin_src emacs-lisp
     (use-package magit
@@ -115,7 +126,7 @@
     #+end_src
   
 * SMEX
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp 
     (use-package smex
       :after package
       :ensure t
@@ -187,6 +198,12 @@
      (use-package clojure-mode
        :defer t
        :config (add-hook 'clojure-mode-hook 'personal-clojure-mode-hook))
+   #+end_src
+** Common lisp
+   #+begin_src emacs-lisp
+     (add-to-list 'exec-path "C:\\Program Files\\Steel Bank Common Lisp\\2.0.0\\") ;; or wherever you installed SBCL or other Lisp
+     ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+     (setq inferior-lisp-program "sbcl") ;; or other Lisp
    #+end_src
 * Recentf
   recentf package keep paths of your last edited files
@@ -290,6 +307,28 @@
 				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
 				  )))
    #+end_src
-   
-   
-
+* EMMS
+  #+begin_src emacs-lisp
+    ;; EMMS
+    ;; (use-package emms
+    ;;       :defer t
+    ;;       :config
+    ;;       (progn  (require 'emms-setup)
+    ;;       (emms-all)
+    ;;       (emms-default-players)
+    ;;       (setq emms-source-file-default-directory "E:\\Music")
+    ;;       (setq emms-playlist-buffer-name "*Music*")
+    ;;       (setq emms-info-asynchronously t)
+    ;;       (emms-add-directory-tree "~/Music/")))
+  #+end_src
+* java
+  #+begin_src emacs-lisp
+      (use-package lsp-java
+	:config
+	(add-hook 'java-mode-hook #'lsp))
+  #+end_src
+* Projectile 
+  #+begin_src emacs-lisp
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  #+end_src

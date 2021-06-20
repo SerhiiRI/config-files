@@ -1,1 +1,26 @@
+* Emacs
+ 
+ My saved emacs config and related to config files
+  
+** Emacs in server mode
+
+  Run emacs in server mode, to file 
+ 
+  #+begin_src sh
+    /usr/bin/emacs --daemon &
+  #+end_src
+
+  For editing something just make shortcuts belove. 
+   
+  #+begin_src sh
+    /usr/bin/emacsclient -c -a "emacs" "some.txt"
+  #+end_src
+ 
+  Also convince to create some alias to that comment in ~.bashrc~, ~.xprofile~ ... somewhere in script which invoked when system start. 
+ 
+  #+begin_src sh
+    alias emdit="emacsclient -c -a emacs"
+  #+end_src
+
+  If you want to use emacsclient to open some files in =nautilus= or make client mode of emacs as desktop icon, you need to create in path ~/usr/share/applications/~ or =~/.local/share/applications/= file with name [[https://github.com/SerhiiRI/config-files/blob/master/emacs/emacsclient.desktop][emacsclient.desktop]], which being visible from GTK toolkits
 

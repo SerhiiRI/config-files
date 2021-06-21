@@ -1,5 +1,6 @@
 * Emacs
 
+#+attr_html: :width 200px
 #+ATTR_HTML: title="Google.com"
 [[https://www.google.com][file:https://github.com/SerhiiRI/config-files/blob/master/emacs/1200px-EmacsIcon.svg.png]]
  

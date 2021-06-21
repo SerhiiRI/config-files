@@ -1,13 +1,7 @@
 * Emacs
 
-#+BEGIN_EXPORT html
- <div align="center">
-  
-<img width="70%" height="70%" src=https://github.com/SerhiiRI/config-files/blob/master/riserconfigs.png>
-  
-</div>
-#+END_EXPORT
-
+#+ATTR_HTML: title="Google.com"
+[[https://www.google.com][file:https://github.com/SerhiiRI/config-files/blob/master/riserconfigs.png]]
  
  My saved emacs config and related to config files
   

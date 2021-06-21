@@ -1,7 +1,7 @@
 * Emacs
 
 #+ATTR_HTML: title="Google.com"
-[[https://www.google.com][file:https://github.com/SerhiiRI/config-files/blob/master/riserconfigs.png]]
+[[https://www.google.com][file:https://github.com/SerhiiRI/config-files/blob/master/emacs/1200px-EmacsIcon.svg.png]]
  
  My saved emacs config and related to config files
   

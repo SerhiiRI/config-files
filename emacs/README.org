@@ -24,3 +24,13 @@
 
   If you want to use emacsclient to open some files in =nautilus= or make client mode of emacs as desktop icon, you need to create in path ~/usr/share/applications/~ or =~/.local/share/applications/= file with name [[https://github.com/SerhiiRI/config-files/blob/master/emacs/emacsclient.desktop][emacsclient.desktop]], which being visible from GTK toolkits
 
+** Emacs daemon 
+
+  Alternative way, you can create Unit file [[https://github.com/SerhiiRI/config-files/blob/master/emacs/emacs.service][emacs.service]]. All you need to do is put file to path =~/.config/systemd/user/emacs.service= 
+  
+  After that turn on service in systemd:
+  
+  #+begin_src sh
+    systemctl enable --user emacs
+    systemctl start --user emacs
+  #+end_src

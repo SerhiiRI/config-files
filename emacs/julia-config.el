@@ -37,7 +37,14 @@
 ;;(load-theme 'gruvbox-light-soft t)
 ;;(load-theme 'espresso t)
 ;; QUICK INSTALL PACKAGES
-;; (dolist (package '(visual-regexp markdown-mode neotree auto-complete paredit htmlize rainbow-delimiters dracula-theme slime))
+;; (setq julia-package-set-helm '(helm helm-ag helm-projectile))
+;; (setq julia-package-set-themes '(sublime-themes cyberpunk-theme dracula-theme twilight-bright-theme twilight-bright spacemacs-theme))
+;; (setq julia-package-set-customize '(rainbow-delimiters neotree dashboard use-package))
+;; (setq julia-package-set-development '(projectile magit htmlize paredit cider auto-complete visual-regexp markdown-mode))
+;; (dolist (package '(append julia-package-set-development
+;; 			  julia-package-set-customize
+;; 			  julia-package-set-themes
+;; 			  julia-package-set-helm))
 ;;    (unless (package-installed-p package)
 ;;        (package-install package)))
 
@@ -70,10 +77,13 @@
 (global-set-key (kbd "C-c q") 'vr/query-replace)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
 
-;IVY MODE
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
+;; helm
+(require 'helm-config)
+(require 'helm)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
+(helm-mode 1)
 
 (defun lisp-mode-hook ()
       "enable some plugins after init mode"

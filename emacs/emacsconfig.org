@@ -1,3 +1,9 @@
+#+TITLE: Riser Emacs Configuration
+#+AUTHOR: Serhii Riznychuk
+#+EMAIL: sergii.riznychuk@gmail.com
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="org.css"/>
+#+STARTUP: overview
+
 * Main Emacs Configuration
   Configuration of this block contains only non-package configuration, or only package system configuration
 
@@ -49,6 +55,13 @@
 ** Global keymap
    Global function 
    #+begin_src emacs-lisp
+     (defun myprevious-window ()
+       (interactive)
+       (other-window -1))
+     (global-set-key (kbd "<C-tab>") 'next-buffer)
+     (global-set-key (kbd "<C-iso-lefttab>") 'previous-buffer)
+     (global-set-key (kbd "M-p") 'other-window)
+     (global-set-key (kbd "M-n") 'myprevious-window)
      (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
      (global-set-key (kbd "C-c w") 'writeroom-mode)
      (global-set-key (kbd "C-'") '(lambda () (interactive) (browse-url "www.google.com.pl")))
@@ -102,12 +115,25 @@
       (global-set-key (kbd "M-S-<down>") 'move-text-down)
     #+end_src
     
-* Ivy
-  #+begin_src emacs-lisp 
-  ;; (ivy-mode 1)
-  ;;   (setq ivy-use-virtual-buffers t)
-  ;; (setq enable-recursive-minibuffers t)
+** Small tips function 
+
+   #+begin_src emacs-lisp
+     (defun my/copy-buffer-file-name ()
+       "Show the full path to the current file in the minibuffer."
+       (interactive)
+       (let ((file-name (buffer-file-name)))
+	 (if file-name
+	     (progn
+	       (message file-name)
+	       (kill-new file-name))
+	   (error "Buffer not visiting a file"))))
+   #+end_src
+
+* Modeline 
+  #+begin_src emacs-lisp
+    (mood-line-mode)
   #+end_src
+
 * Magit
   #+begin_src emacs-lisp
     (use-package magit
@@ -117,24 +143,62 @@
   #+end_src
 
 * Neotree
+
     #+begin_src emacs-lisp
+      (defun neotree-toggle-or-open-file-dir ()
+	(interactive) 
+	(if (neo-global--window-exists-p) 
+	    (neotree-hide) 
+	  ((neo-open-dir (buffer-file-name)))))
+
       (use-package neotree 
 	:ensure t
 	:defer 3
 	:bind (("<f8>" . neotree-toggle)
+	       ("<f9>" . neotree-toggle-or-open-file-dir)
 	       ("C-c t" . neotree-toggle)))
     #+end_src
-  
+
+* Ivy
+  #+begin_src emacs-lisp 
+  ;; (ivy-mode 1)
+  ;;   (setq ivy-use-virtual-buffers t)
+  ;; (setq enable-recursive-minibuffers t)
+  #+end_src
+
 * SMEX
   #+begin_src emacs-lisp 
-    (use-package smex
-      :after package
+    ;; (use-package smex
+    ;;   :after package
+    ;;   :ensure t
+    ;;   :init
+    ;;   (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
+    ;;   (smex-initialize)
+    ;;   (global-set-key (kbd "M-x") 'smex)
+    ;;   (global-set-key (kbd "M-X") 'smex-major-mode-commands))
+  #+end_src
+
+* HELM
+
+  #+begin_src emacs-lisp 
+    (use-package helm 
       :ensure t
-      :init
-      (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
-      (smex-initialize)
-      (global-set-key (kbd "M-x") 'smex)
-      (global-set-key (kbd "M-X") 'smex-major-mode-commands))
+      :demand t
+      :preface (require 'helm-config)
+      :bind (("M-x" . helm-M-x)
+	     ;; ("C-x C-f" . helm-find-files)
+	     ;; ("C-x C-f" . helm-find-files)
+	     ("C-x C-f" . ido-find-file)
+	     ;; ("<tab>" . helm-execute-persistent-action)
+	     ;; ("TAB" . helm-execute-persistent-action)
+	     ;; ("C-z" . helm-select-action)
+	     ("C-x b" . helm-buffers-list)
+	     ;; ("C-x c o" . helm-occur) ;SC
+	     ;; ("M-y" . helm-show-kill-ring) ;SC
+	     ;; ("C-x r b" . helm-filtered-bookmarks)
+	     )
+      :config
+      (helm-mode 1))
   #+end_src
 
 * IDO
@@ -182,10 +246,15 @@
        "Make some word or string show as pretty Unicode symbols"
        (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
 				      ("fn" . ?λ)
-				      ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘
+				      ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘ ⇩ ⇘ ⯆ ⯅ 🭶 ⯇ ⯈
+				      ;; Greek alphabet 
+				      ;; Α α, Β β, Γ γ, Δ δ, Ε ε, Ζ ζ, Η η, Θ θ, Ι ι, Κ κ, Λ λ, Μ μ, Ν ν, 
+				      ;; Ξ ξ, Ο ο, Π π, Ρ ρ, Σ σ/ς, Τ τ, Υ υ, Φ φ, Χ χ, Ψ ψ, Ω ω
 				      ;; ("->" . ?→)
 				      ;; ("->>" . ?↠)
 				      ;; ("=>" . ?⇒)
+				      ("defmulti" . ?Ƒ)
+				      ("defmethod" . ?ƒ)
 				      ("/=" . ?≠)("!=" . ?≠)
 				      ("==" . ?≡)("not" . ?!)
 				      ("<=" . ?≤)(">=" . ?≥)
@@ -205,6 +274,7 @@
      ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
      (setq inferior-lisp-program "sbcl") ;; or other Lisp
    #+end_src
+
 * Recentf
   recentf package keep paths of your last edited files
   #+begin_src emacs-lisp
@@ -233,23 +303,37 @@
   #+end_src
 
 * Dashboard
+
   #+begin_src emacs-lisp
-  (use-package dashboard
-     :demand t
-     :ensure t
-     ;; :diminish dashboard-mode
-     :init
-     (setq dashboard-banner-logo-title "* Live Long And Prosper *")
-     (setq dashboard-startup-banner "~/Spock.png")
-     (setq dashboard-page-separator "\n\n")
-     (setq dashboard-set-init-info nil)
-     (setq dashboard-center-content t)
-     (setq dashboard-show-shortcuts t)
-     (setq dashboard-set-footer nil)
-     (setq dashboard-items '((recents  . 13)(bookmarks . 10)(agenda)))
-     :config
-     (dashboard-setup-startup-hook))
+	(use-package dashboard
+	  :demand t
+	  :ensure t
+	  ;; :diminish dashboard-mode
+	  :init
+	  (setq dashboard-banner-logo-title "* Live Long And Prosper *")
+	  (setq dashboard-startup-banner "~/.emacs.d/Spock.png")
+	  ;; (setq dashboard-startup-banner "~/.emacs.d/duck.txt")
+	  ;; (setq dashboard-text-banner "/home/serhii/.emacs.d/duck.txt")
+	  ;; agenda
+	  (setq dashboard-week-agenda nil)
+	  ;; (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
+	  (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
+	  ;; (setq dashboard-match-agenda-entry nil)
+	  ;; other
+	  (setq dashboard-page-separator "\n\n")
+	  (setq dashboard-set-init-info nil)
+	  (setq dashboard-center-content t)
+	  (setq dashboard-show-shortcuts t)
+	  (setq dashboard-set-footer nil)
+	  (setq dashboard-items '((recents  . 15)
+				  (projects . 14)
+				  (agenda . 15)
+				  (bookmarks . 5)))
+	  (setq dashboard-item-names '(("Agenda for today:" . "Agenda:")))
+	  :config
+	  (dashboard-setup-startup-hook))
   #+end_src
+
 * Visual Regular expression
   Replace regular regexp on visula regexp
   #+begin_src emacs-lisp
@@ -257,6 +341,7 @@
     :bind (("C-c r" . vr/replace)
            ("C-c q" . vr/query-replace)))
   #+end_src
+
 * Org mode
 ** Bullet mode
    Bullet replace header Symbol's on other markup specified in variable ~org-bullets-bullet-list~
@@ -272,6 +357,7 @@
 	;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 	(org-bullets-mode))
    #+end_src
+
 ** LaTeX conf
    #+begin_src emacs-lisp
      ;; (require 'ox-latex)
@@ -291,21 +377,38 @@
 ** Main configuration
    #+begin_src emacs-lisp
 
+     (defun org-mode-pretty-symbols ()
+	    "Make some word or string show as pretty Unicode symbols"
+	    (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
+					   ;; ("fn" . ?λ)
+					   ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘ ⇩ ⇘ ⯆ ⯅ 🭶 ⯇ ⯈
+					   ;; ("->" . ?→)
+					   ;; ("->>" . ?↠)
+					   ;; ("=>" . ?⇒)
+					   ("#+begin_src" ?⯈)
+					   ("#+end_src" ?⯅)
+					   ("#+RESULTS:" ?=))))
      (use-package org
        :bind (("C-c l" . org-store-link)
 	      ("C-c a" . org-agenda))
-       :init (setq org-agenda-files (list "C:/space/agenda.org")
+       :init (setq org-agenda-files (list "~/Documents/agenda/main.org" "~/programs/jarman/agenda.org")
 		   org-format-latex-options (plist-put org-format-latex-options :scale 2.3)
 		   org-hide-emphasis-markers t
+		   truncate-lines t
 		   org-log-done t
-		   org-src-tab-acts-natively t)
+		   org-src-tab-acts-natively t
+		   org-babel-clojure-backend 'cider)
        :config 
        (add-hook 'org-mode-hook (lambda ()
 				  ;; (xah-math-input-mode)
+				  (require 'ob-clojure)
 				  (org-bullets-mode)
+				  (org-mode-pretty-symbols)
+				  (prettify-symbols-mode)
 				  ;; (set-face-attribute 'org-block-begin-line nil :foreground (face-background 'org-block-begin-line nil 'default))
 				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
 				  )))
+
    #+end_src
 * EMMS
   #+begin_src emacs-lisp
@@ -323,12 +426,157 @@
   #+end_src
 * java
   #+begin_src emacs-lisp
-      (use-package lsp-java
-	:config
-	(add-hook 'java-mode-hook #'lsp))
+    ;; (use-package lsp-java
+    ;;   :config
+    ;;   (add-hook 'java-mode-hook #'lsp))
   #+end_src
-* Projectile 
+* Projectile with helm
   #+begin_src emacs-lisp
-    (projectile-mode +1)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (use-package projectile
+      :ensure t
+      :init
+      (projectile-mode +1)
+      :bind (:map projectile-mode-map
+		  ;; ("s-p" . projectile-command-map)
+		  ("C-c p" . projectile-command-map)))
+
+    (use-package helm-projectile
+      :ensure t
+      :after (helm projectile)
+      :init
+      (helm-projectile-on))
+  #+end_src
+* Firm code 
+  Code
+** Freshcode
+   #+begin_src emacs-lisp
+     (setq cider-known-endpoints
+	   '(("platform-repl-back" "0.0.0.0" "3012")
+	     ("babashka" "0.0.0.0" "1667")
+	     ("platform-repl-front" "0.0.0.0" "8333")))
+
+     ;; (setq cider-fcode-figwheel-nrepl
+     ;;       )
+
+     ;; (defun cider-fcode ()
+     ;;   (interactive)
+     ;;   (save-some-buffers)
+     ;;   (with-current-buffer (cider-current-repl-buffer)
+     ;;     (goto-char (point-max))
+     ;;     (insert cider-fcode-figwheel-nrepl)
+     ;;     (cider-connect-cljs)))
+
+     ;; (defun cider-eval-expression-at-point-in-repl ()
+     ;;   "Sends the preceding expression to the Cider REPL."
+     ;;   (interactive)
+     ;;   (let ((form "(+ 1 2)"))
+     ;;     ;; Strip excess whitespace
+     ;;     (while (string-match "\`\s+\|\n+\'" form)
+     ;;       (setq form (replace-match "" t t form)))
+     ;;     (set-buffer (cider-find-or-create-repl-buffer))
+     ;;     (goto-char (point-max))
+     ;;     (insert form)
+     ;;     (cider-repl-return)))
+     ;; (cider-switch-to-repl-buffer)
+
+     ;; (setq cider-jack-in-dev-profile '("cider" "dev"))
+     ;; (defun cider-jack-in-with-profile ()
+     ;;   (interactive)
+     ;;   (letrec ((profile (read-string (message "Enter profile name(%s): " (string-join cider-jack-in-dev-profile ","))))
+     ;; 	   (lein-params (message "with-profile %s repl :headless" (if (seq-empty-p profile) (string-join cider-jack-in-dev-profile ",") profile))))
+     ;;     (message "lein-params set to: %s" lein-params)
+     ;;     (set-variable 'cider-lein-parameters lein-params)
+     ;;     ;; ;; just a empty parameter
+     ;;     (cider-jack-in '())
+     ;;     (cider-switch-to-repl-buffer)
+     ;;     (cider-insert-in-repl
+     ;;      "(do (use 'figwheel-sidecar.repl-api)
+     ;; 	   (start-figwheel!)
+     ;; 	   (cljs-repl))" t)
+
+     ;;     ;; (with-current-buffer (cider-current-repl-buffer)
+     ;;     ;;   (goto-char (point-max))
+     ;;     ;;   (insert "(do (use 'figwheel-sidecar.repl-api)
+     ;;     ;; 	   (start-figwheel!)
+     ;;     ;; 	   (cljs-repl))")
+     ;;     ;;   ;; (cider-connect-cljs)
+     ;;     ;;   )
+     ;;     ))
+
+
+     ;; (progn  (cider-switch-to-repl-buffer)
+     ;; 	(cider-insert-in-repl
+     ;; 	 "(do (use 'figwheel-sidecar.repl-api)
+     ;; 	   (start-figwheel!)
+     ;; 	   (cljs-repl))" t))
+
+   #+end_src
+* SQL Mode
+  
+  My first on hand sql connection manager
+  #+begin_src emacs-lisp
+    (setq sql-connection-alist
+	  '((bdm_demo_dev_v2
+	     (sql-product 'mysql)
+	     (sql-server "127.0.0.1")
+	     (sql-user "root")
+	     (sql-password "root")
+	     (sql-database "bdm_demo_dev_v2")
+	     (sql-port 3406))
+	    (trashpanda-team-dell
+	     (sql-product 'mysql)
+	     (sql-server "trashpanda-team.ddns.net")
+	     (sql-user "root")
+	     (sql-password "1234")
+	     (sql-database "jarman")
+	     (sql-port 3307))
+	    (trashpanda-rpi
+	     (sql-product 'mysql)
+	     (sql-server "trashpanda-team.ddns.net")
+	     (sql-user "jarman")
+	     (sql-password "dupa")
+	     (sql-database "jarman")
+	     (sql-port 3306))))
+
+    (defmacro myflet (bindings &rest body)
+      "Works like the old `flet'. Does not validate form structure."
+      (declare (indent defun))
+      `(cl-letf ,(mapcar (lambda (binding)
+			   `((symbol-function ',(car binding))
+			     (lambda ,(cadr binding) ,@(cddr binding))))
+			 bindings)
+	 ,@body))
+
+    (defun sql-connect-preset (name)
+      "Connect to a predefined SQL connection listed in `sql-connection-alist'"
+      (eval `(let ,(cdr (assoc name sql-connection-alist))
+	       (myflet ((sql-get-login (&rest what)))
+		 (sql-product-interactive sql-product)))))
+
+    (defun sql-connect-trashpanda-team-dell ()
+      (interactive)
+      (sql-connect-preset 'trashpanda-team-dell))
+
+    (defun sql-connect-bdm-demo ()
+      (interactive)
+      (sql-connect-preset 'bdm_demo_dev_v2))
+  #+end_src
+* Yafolding
+  #+begin_src emacs-lisp
+    ;; (defvar yafolding-mode-map
+    ;;   (let ((map (make-sparse-keymap)))
+    ;;     (define-key map (kbd "C-c") #'yafolding-hide-parent-element)
+    ;;     (define-key map (kbd "<C-M-return>") #'yafolding-toggle-all)
+    ;;     (define-key map (kbd "<C-return>") #'yafolding-toggle-element)
+    ;;     map))
+  #+end_src
+* Reverse-im
+
+  #+begin_src emacs-lisp
+    (use-package reverse-im
+      :ensure t
+      :custom
+      (reverse-im-input-methods '("ukrainian-computer"))
+      :config
+      (reverse-im-mode t))
   #+end_src

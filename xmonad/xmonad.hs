@@ -5,6 +5,7 @@ import XMonad.Hooks.ManageDocks (ToggleStruts(..),avoidStruts,docks,manageDocks,
 import XMonad.Hooks.FadeInactive
 
 import XMonad.Util.EZConfig
+import XMonad.Util.SpawnOnce
 import XMonad.ManageHook
 import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.EwmhDesktops
@@ -29,7 +30,18 @@ import qualified XMonad.Util.Brightness as Bright
 -- [4] logHook - dzen status bar configuration
 -- [5] window border size for layouthook-s
 
-myXmonadBar = "dzen2 -dock -x '0' -w '1920' -h '20' -fn 'tahoma' -ta 'l' -fg '#FFFFFF' -bg '#1B1D1E'"
+-- myXmonadBar = "dzen2 -dock -x '0' -w '1920' -h '21' -fn 'tahoma' -ta 'l' -fg '#F9F9F9' -bg '#000000'"
+-- myXmonadBar = "dzen2 -dock -x '0' -w '1680' -h '26' -ta 'l' -fg '#9c7cbf' -bg '#000000' -fn 'Open Sans:style=Bold' "
+myXmonadBar = "dzen2 -dock -y '0' -x '0' -w '1920' -h '23' -ta 'l' -fg '#9c7cbf' -bg '#000000' -fn 'Open Sans:style=Bold' "
+-- myLauncher = "dmenu_run -fn 'monospace-9' -nb '#000000' -nf '#F9F9F9' -sb '#87428a' -sf '#FFFFFF'"
+dmenu = "dmenu_run -nb '#000000' -nf '#F9F9F9' -sb '#87428a' -sf '#FFFFFF'"
+dmenufm = "dmenufm"
+dmenuKillProcess = "dmenu_kill_process"
+dmenuShootUp = "dmenu_shoot_app"
+dmenuEditConfig = "dmenu_edit_config"
+dmenuMachineControl = "dmenu_machine_control"
+dmenuSoundControl = "dmenu_sound_control"
+dmenuNetworkManager = "networkmanager_dmenu"
 
 main = do
    dzenLeftBar <- spawnPipe myXmonadBar
@@ -39,16 +51,22 @@ main = do
      , modMask     = myModMask
      , borderWidth = myBorderWidth
      , workspaces  = myWorkspace
-     --, manageHook  = myManagehook
      --, layoutHook  = avoidStruts myLayoutHook
      , layoutHook  = mySpacing $ avoidStruts $ smartBorders $ myLayoutHook 
      , manageHook  = manageDocks <+> manageHook def
      , handleEventHook = handleEventHook def <+> docksEventHook <+> fullscreenEventHook
-     , startupHook = setWMName "LG3D"
-     , normalBorderColor        = "#111111"
-     , focusedBorderColor       = "#AAAACC"
+     -- , startupHook = setWMName "LG3D"
+     , startupHook = myStartupHook
+     -- DRACULA BORDERS 
+     , normalBorderColor        = "#282A36"
+     , focusedBorderColor       = "#9c7cbf"
      } `additionalKeys` myKeys
 
+
+myStartupHook :: X ()
+myStartupHook = do
+  spawnOnce "/usr/bin/emacs --daemon &"
+  setWMName "LG3D"
 
 myLayoutHook  = tiled ||| Mirror tiled ||| Full
   where
@@ -56,11 +74,11 @@ myLayoutHook  = tiled ||| Mirror tiled ||| Full
      nmaster = 1
      ratio   = 1/2
      delta   = 3/100
-myTerminal    = "uxterm"
-myModMask     = mod4Mask -- Alt клавиша (или Super_L)
-myBorderWidth = 1
+myTerminal    = "urxvt"
+myModMask     = mod4Mask
+myBorderWidth = 3
 myWorkspace :: [String]
-myWorkspace = ["1:dev", "2:dev", "3:web", "4:other", "5:media","6:msg"] ++ map show [7..9]
+myWorkspace = ["1 dev ", "2 dev", "3 web", "4 other", "5 media","6 msg"] ++ map show [7..9]
 myManagehook :: ManageHook
 myManagehook = composeAll . concat $
   [
@@ -75,10 +93,9 @@ myManagehook = composeAll . concat $
     myMessg     = ["viber", "Discord"]
 
 
-
 myKeys =
   [
-    ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock"),
+    ((myModMask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock"),
     ((0                     , 0x1008FF11), spawn "amixer -q sset Master 5%-"),
     ((0                     , 0x1008FF13), spawn "amixer -q sset Master 5%+"),
     ((0                     , 0x1008FF12), spawn "amixer set Master toggle")
@@ -86,22 +103,24 @@ myKeys =
   ++
   [
     ((0, 0xFF61), spawn "scrot -q 1 $HOME/pictures/screenshots/%Y-%m-%d-%H:%M:%S.png"),
-    ((mod4Mask .|. shiftMask, xK_n), spawn "nautilus -w"),
-    ((mod4Mask .|. shiftMask, xK_t), spawn "thunar"),
-    ((mod4Mask .|. shiftMask, xK_o), spawn "opera"),
-    ((mod4Mask .|. shiftMask, xK_v), spawn "vivaldi"),
-    ((mod4Mask .|. shiftMask, xK_r), spawn "rhythmbox"),
-    ((mod4Mask .|. shiftMask, xK_s), spawn "gnome-screenshot -i"),
-    ((mod4Mask .|. shiftMask, xK_p), spawn "systemctl suspend"),
-    ((mod4Mask .|. shiftMask, xK_i), spawn "networkmanager_dmenu")
+    ((myModMask .|. shiftMask, xK_n), spawn "nautilus -w"),
+    ((myModMask .|. shiftMask, xK_s), spawn "gnome-screenshot -i")
   ]
   ++
   [
-    ((mod4Mask, xK_Escape), spawn "/home/serhii/bin/layout_keyboard_switcher.sh")
+    ((myModMask, xK_Escape), spawn "/home/serhii/.config/bin/layout_keyboard_switcher.sh"),
+    ((myModMask, xK_p),      spawn dmenu),
+    ((myModMask .|. controlMask, xK_f), spawn dmenufm),
+    ((myModMask .|. controlMask, xK_k), spawn dmenuKillProcess),
+    ((myModMask .|. controlMask, xK_e), spawn dmenuEditConfig),
+    ((myModMask .|. controlMask, xK_p), spawn dmenuShootUp),
+    ((myModMask .|. controlMask, xK_m), spawn dmenuMachineControl),
+    ((myModMask .|. controlMask, xK_s), spawn dmenuSoundControl),
+    ((myModMask .|. controlMask, xK_n), spawn dmenuNetworkManager)
   ]
   ++
   [
-    ((0, XF86.xF86XK_MonBrightnessUp), Bright.increase),       -- Increase screen brightness SUPER + 8/9
+    ((0, XF86.xF86XK_MonBrightnessUp)  , Bright.increase),       -- Increase screen brightness SUPER + 8/9
     ((0, XF86.xF86XK_MonBrightnessDown), Bright.decrease)
   ]
   ++
@@ -118,8 +137,14 @@ myKeys =
   --   ((0, XF86.xF86XK_AudioStop), spawn "rhythmbox-client --play-pause"),
   --   ((0, XF86.xF86XK_AudioPlay), spawn "rhythmbox-client --play-pause")
   -- ]
-  -- ++
+  ++
   -- -- | MOCP music set
+  [
+    ((myModMask , XF86.xF86XK_AudioNext), spawn "mocp -f"),
+    ((myModMask , XF86.xF86XK_AudioPrev), spawn "mocp -r"),
+    ((myModMask , XF86.xF86XK_AudioStop), spawn "mocp -G"),
+    ((myModMask , XF86.xF86XK_AudioPlay), spawn "mocp -G")
+  ]
   -- [
   --   ((0, XF86.xF86XK_AudioNext), spawn "mocp -f"),
   --   ((0, XF86.xF86XK_AudioPrev), spawn "mocp -r"),
@@ -131,14 +156,21 @@ myBitmapsDir = "/home/my_user/.xmonad/dzen2"
 myLogHook :: Handle -> X ()
 myLogHook h = dynamicLogWithPP $ def
     {
-        ppCurrent           =   dzenColor "#FF0022" "#1B1D1E" . pad
-      , ppVisible           =   dzenColor "#00CCCC" "#1B1D1E" . pad
-      , ppHidden            =   dzenColor "white" "#1B1D1E" . pad
-      , ppHiddenNoWindows   =   dzenColor "#7b7b7b" "#1B1D1E" . pad
-      , ppUrgent            =   dzenColor "#ff0000" "#1B1D1E" . pad
+      
+      -- ppCurrent           =   dzenColor "#50fa7b" "#1B1D1E" . pad
+      -- , ppVisible           =   dzenColor "#8be9fd" "#1B1D1E" . pad
+      -- , ppHidden            =   dzenColor "#cacaca" "#1B1D1E" . pad
+      -- , ppHiddenNoWindows   =   dzenColor "#cacaca" "#1B1D1E" . pad
+      -- , ppUrgent            =   dzenColor "#ff0000" "#1B1D1E" . pad
+        ppCurrent           =   dzenColor "#50fa7b" "#000000" . pad
+      , ppVisible           =   dzenColor "#8be9fd" "#000000" . pad
+      , ppHidden            =   dzenColor "#6272a4" "#000000" . pad
+      , ppHiddenNoWindows   =   dzenColor "#44475a" "#000000" . pad
+      , ppUrgent            =   dzenColor "#ff0000" "#000000" . pad
       , ppWsSep             =   " "
-      , ppSep               =   "     "
-      , ppLayout            =   dzenColor "#00EEEE" "#1B1D1E" .
+      -- , ppSep               =   "     "
+      , ppSep               =   " "
+      , ppLayout            =   dzenColor "#9c7cbf" "#000000" .
                                 (\x -> case x of
                                     "ResizableTall"             ->      "^i(" ++ myBitmapsDir ++ "/tall.xbm)"
                                     "Mirror ResizableTall"      ->      "^i(" ++ myBitmapsDir ++ "/mtall.xbm)"
@@ -146,13 +178,20 @@ myLogHook h = dynamicLogWithPP $ def
                                     "Simple Float"              ->      "~"
                                     _                           ->      x
                                 )
-      , ppExtras            =   [ (Logr.wrapL "[-" "-]" (Logr.dzenColorL "#00FF00" "#1B1D1E" $ Logr.date "%R"))
-                                , (Logr.wrapL " Data: " "" (Logr.dzenColorL "#00FF00" "#1B1D1E" $ Logr.date "%d %A [%m]"))
-                                , (Logr.wrapL " Battery: " "" (Logr.dzenColorL "#FF00AA" "#1B1D1E" $ Logr.battery))
-                                , (Logr.wrapL "[" "]" (Logr.dzenColorL "#00AAAA" "#1B1D1E" $ (Logr.logCmd "slstatus -s")))
-                                , (Logr.wrapL "[" "]" (Logr.dzenColorL "#FF0022" "#1B1D1E" $ (Logr.logCmd "setxkbmap -query | grep '^layout:' |awk '{print $2}'")))
+      -- , ppExtras            =   [ (Logr.wrapL "[-" "-]" (Logr.dzenColorL "#00FF00" "#1B1D1E" $ Logr.date "%R"))
+      --                           , (Logr.wrapL " Data: " "" (Logr.dzenColorL "#00FF00" "#1B1D1E" $ Logr.date "%d %A [%m]"))
+      --                           , (Logr.wrapL " Battery: " "" (Logr.dzenColorL "#FF00AA" "#1B1D1E" $ Logr.battery))
+      --                           , (Logr.wrapL "[" "]" (Logr.dzenColorL "#00AAAA" "#1B1D1E" $ (Logr.logCmd "slstatus -s")))
+      --                           , (Logr.wrapL "[" "]" (Logr.dzenColorL "#FF0022" "#1B1D1E" $ (Logr.logCmd "setxkbmap -query | grep '^layout:' |awk '{print $2}'")))
+      --                           ]
+-- = "dmenu_run -nb '#000000' -nf '#F9F9F9' -sb '#87428a' -sf '#FFFFFF'" y#50fa7b
+      , ppExtras            =   [ (Logr.wrapL "    " "  > " (Logr.dzenColorL "#87428A" "#000000" $ Logr.date "%R"))
+                                , (Logr.wrapL "" "  > " (Logr.dzenColorL "#87428A" "#000000" $ Logr.date "%d %A %m"))
+                                , (Logr.wrapL "" "  > " (Logr.dzenColorL "#87428A" "#000000" $ Logr.battery))
+                                -- , (Logr.wrapL "," ")" (Logr.dzenColorL "#00AAAA" "#000000" $ (Logr.logCmd "slstatus -s")))
+                                , (Logr.wrapL "" "    " (Logr.dzenColorL "#87428A" "#000000" $ (Logr.logCmd "setxkbmap -query | grep '^layout:' |awk '{print $2}'")))
                                 ]
-      , ppTitle             =   (" " ++) . dzenColor "#FFAA00" "#1B1D1E" . shorten 40 . dzenEscape
+      , ppTitle             =   ("" ++) . dzenColor "#9c7cbf" "#000000" . shorten 40 . dzenEscape
       , ppOrder             =   \(ws:wtall:titl:extr) -> [ws,wtall]++extr++[titl]
       , ppOutput            =   hPutStrLn h
     }

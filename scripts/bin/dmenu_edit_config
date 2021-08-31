@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Script name: dm-confedit
+# Description: Choose from a list of configuration files to edit.
+# Dependencies: dmenu, emacsclient
+# GitLab: https://www.gitlab.com/dwt1/dmscripts
+# License: https://www.gitlab.com/dwt1/dmscripts/LICENSE
+# Contributors: Derek Taylor
+#               Simon Ingelsson
+#               HostGrady
+
+CONFIG_EDITOR="emacsclient -c -a 'emacs'"
+(pwd)
+declare -a options=(
+    "emacs configuration - $HOME/.emacsconfig.org"
+    "xmonad - $HOME/.xmonad/xmonad.hs"
+    "dmenu_config_edit - $HOME/.config/bin/dmenu_edit_config"
+    "dmenu_machine_control - $HOME/.config/bin/dmenu_machine_control"
+    "dmenu_kill_process - $HOME/.config/bin/dmenu_kill_process"
+    "dmenu_shoot_app - $HOME/.config/bin/dmenu_shoot_app"
+    "personal agenda - $HOME/Documents/agenda/main.org"
+    "freshcode agenda - $HOME/Documents/agenda/freshcode.org"
+    "atmoterm agenda - $HOME/Documents/agenda/atmoterm.org"
+    "tickets backlog - $HOME/tickets/thread.org"
+    "quit"
+)
+
+# Piping the above array (cleaned) into dmenu.
+# We use "printf '%s\n'" to format the array one item to a line.
+choice=$(printf '%s\n' "${options[@]}" | dmenu -i -sb "#228185" -l 20 -p 'Edit config')
+
+if [[ "$choice" == "quit" ]]; then
+    echo "Quit. Program terminated." && exit 1
+elif [ "$choice" ]; then
+    cfg=$(printf '%s\n' "${choice}" | awk '{print $NF}')
+    # shellcheck disable=SC2154
+    $CONFIG_EDITOR "${cfg}"
+    # What to do if we just escape without choosing anything.
+else
+    echo "Program terminated." && exit 0
+fi
+
+
+

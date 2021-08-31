@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# dmenu theming
+lines="-l 20"
+# font="-fn Inconsolata-13"
+# colors="-nb #2C323E -nf #9899a0 -sb #BF616A -sf #2C323E"
+number_re='^[0-9]+$'
+choice=$(pactl list short sinks | awk '{print $1" "$2}' | dmenu -i -sb "#ab2053" -l 10 -p 'some text')
+choiced_sink=$(printf '%s\n' "${choice}" | awk '{print $1}')
+if [[ "$choiced_sink" =~ $number_re ]]; then 
+    echo "Sink -> $choice"
+    pactl set-default-sink "${choiced_sink}"
+fi
+exit 0
+

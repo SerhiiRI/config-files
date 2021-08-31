@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+TERM="urxvt -e sh -c"
+declare -a options=(
+	"mocp - media player server"
+	"htop - resource manager"
+	"fcodevpn - freshcode openvpn"
+	# "babashka - run quick babashka repl (1667)"
+	"quit"
+)
+
+bb nrepl-server
+choice=$(printf '%s\n' "${options[@]}" | dmenu -i -l 20 -sb '#5a8033' -p 'Choose CLI program')
+
+if [[ "$choice" == "quit" ]]; then
+    echo "Quit. Program terminated." && exit 1
+elif [ "$choice" ]; then
+    progrm=$(printf '%s\n' "${choice}" | awk '{print $1}')
+    # shellcheck disable=SC2154
+    if [[ "${progrm}" == "htop" ]]; then
+    $TERM "${progrm}"
+    elif [[ "${progrm}" == "mocp" ]]; then
+    $TERM "${progrm} -T tty"
+    elif [[ "${progrm}" == "fcodevpn" ]]; then
+    $TERM "sudo openvpn --config $HOME/fcode/docs/client.ovpn"
+    # elif [[ "${progrm}" == "babashka" ]]; then
+    # $TERM "bb nrepl-server"
+    else
+        echo "Program terminated." && exit 0
+    fi
+    # What to do if we just escape without choosing anything.
+else
+    echo "Program terminated." && exit 0
+fi

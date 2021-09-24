@@ -38,7 +38,7 @@
 ;;(load-theme 'espresso t)
 ;; QUICK INSTALL PACKAGES
 ;; (setq julia-package-set-helm '(helm helm-ag helm-projectile))
-;; (setq julia-package-set-themes '(sublime-themes cyberpunk-theme dracula-theme twilight-bright-theme twilight-bright spacemacs-theme))
+;; (setq julia-package-set-themes '(sublime-themes almost-mono-themes cyberpunk-theme dracula-theme twilight-bright-theme twilight-bright spacemacs-theme))
 ;; (setq julia-package-set-customize '(rainbow-delimiters neotree dashboard use-package))
 ;; (setq julia-package-set-development '(projectile magit htmlize paredit cider auto-complete visual-regexp markdown-mode))
 ;; (dolist (package '(append julia-package-set-development

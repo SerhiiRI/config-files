@@ -33,22 +33,6 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "JetBrains Mono")))))
 
-;;(load-theme 'twilight-bright-theme t)
-;;(load-theme 'gruvbox-light-soft t)
-;;(load-theme 'espresso t)
-;; QUICK INSTALL PACKAGES
-;; (setq julia-package-set-helm '(helm helm-ag helm-projectile))
-;; (setq julia-package-set-themes '(sublime-themes almost-mono-themes cyberpunk-theme dracula-theme twilight-bright-theme spacemacs-theme))
-;; (setq julia-package-set-customize '(rainbow-delimiters neotree dashboard use-package))
-;; (setq julia-package-set-development '(projectile magit htmlize paredit cider auto-complete visual-regexp markdown-mode))
-;; (dolist (package '(append julia-package-set-development
-;; 			  julia-package-set-customize
-;; 			  julia-package-set-themes
-;; 			  julia-package-set-helm))
-;;    (unless (package-installed-p package)
-;;        (package-install package)))
-
-
 ;;; DISABLE UI COMPONENTS
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)	

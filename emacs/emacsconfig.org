@@ -129,6 +129,11 @@
 	   (error "Buffer not visiting a file"))))
    #+end_src
 
+** Artist mode
+   #+begin_src emacs-lisp
+     (add-hook 'artist-mode-hook (lambda () (setq indent-tabs-mode nil)))
+   #+end_src
+
 * Modeline 
   #+begin_src emacs-lisp
     (mood-line-mode)
@@ -155,9 +160,16 @@
 	:ensure t
 	:defer 3
 	:bind (("<f8>" . neotree-toggle)
-	       ("<f9>" . neotree-toggle-or-open-file-dir)
+	       ;; ("<f9>" . neotree-toggle-or-open-file-dir)
 	       ("C-c t" . neotree-toggle)))
+
     #+end_src
+
+* Treemacs
+
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "<f9>") 'treemacs)
+  #+end_src
 
 * Ivy
   #+begin_src emacs-lisp 
@@ -293,55 +305,6 @@
      (recentf-mode 1))
   #+end_src
 
-* Writeroom mode
-  #+begin_src emacs-lisp
-  (use-package writeroom-mode
-     :ensure t
-     :bind (("C-M-<" . writeroom-decrease-width)
-            ("C-M->" . writeroom-increase-width)
-	    ("C-M-=" . writeroom-adjust-width)))
-  #+end_src
-
-* Dashboard
-
-  #+begin_src emacs-lisp
-	(use-package dashboard
-	  :demand t
-	  :ensure t
-	  ;; :diminish dashboard-mode
-	  :init
-	  (setq dashboard-banner-logo-title "* Live Long And Prosper *")
-	  (setq dashboard-startup-banner "~/.emacs.d/Spock.png")
-	  ;; (setq dashboard-startup-banner "~/.emacs.d/duck.txt")
-	  ;; (setq dashboard-text-banner "/home/serhii/.emacs.d/duck.txt")
-	  ;; agenda
-	  (setq dashboard-week-agenda nil)
-	  ;; (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
-	  (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
-	  ;; (setq dashboard-match-agenda-entry nil)
-	  ;; other
-	  (setq dashboard-page-separator "\n\n")
-	  (setq dashboard-set-init-info nil)
-	  (setq dashboard-center-content t)
-	  (setq dashboard-show-shortcuts t)
-	  (setq dashboard-set-footer nil)
-	  (setq dashboard-items '((recents  . 15)
-				  (projects . 14)
-				  (agenda . 15)
-				  (bookmarks . 5)))
-	  (setq dashboard-item-names '(("Agenda for today:" . "Agenda:")))
-	  :config
-	  (dashboard-setup-startup-hook))
-  #+end_src
-
-* Visual Regular expression
-  Replace regular regexp on visula regexp
-  #+begin_src emacs-lisp
-  (use-package visual-regexp
-    :bind (("C-c r" . vr/replace)
-           ("C-c q" . vr/query-replace)))
-  #+end_src
-
 * Org mode
 ** Bullet mode
    Bullet replace header Symbol's on other markup specified in variable ~org-bullets-bullet-list~
@@ -357,7 +320,6 @@
 	;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 	(org-bullets-mode))
    #+end_src
-
 ** LaTeX conf
    #+begin_src emacs-lisp
      ;; (require 'ox-latex)
@@ -373,31 +335,57 @@
      ;; '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
      ;;   "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")
    #+end_src
-
+   
 ** Main configuration
    #+begin_src emacs-lisp
-
      (defun org-mode-pretty-symbols ()
-	    "Make some word or string show as pretty Unicode symbols"
-	    (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
-					   ;; ("fn" . ?λ)
-					   ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘ ⇩ ⇘ ⯆ ⯅ 🭶 ⯇ ⯈
-					   ;; ("->" . ?→)
-					   ;; ("->>" . ?↠)
-					   ;; ("=>" . ?⇒)
-					   ("#+begin_src" ?⯈)
-					   ("#+end_src" ?⯅)
-					   ("#+RESULTS:" ?=))))
+       "Make some word or string show as pretty Unicode symbols"
+       (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
+				      ;; ("fn" . ?λ)
+				      ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘ ⇩ ⇘ ⯆ ⯅ 🭶 ⯇ ⯈
+				      ;; ("->" . ?→)
+				      ;; ("->>" . ?↠)
+				      ;; ("=>" . ?⇒)
+				      ("#+begin_export" ?⯈)
+				      ("#+end_export" ?⯅)
+				      ("#+begin_example" ?⯆)
+				      ("#+end_example" ?⯅)
+				      ("#+begin_src" ?⯈)
+				      ("#+end_src" ?⯅)
+				      ("#+RESULTS:" ?=))))
+
      (use-package org
        :bind (("C-c l" . org-store-link)
 	      ("C-c a" . org-agenda))
-       :init (setq org-agenda-files (list "~/Documents/agenda/main.org" "~/programs/jarman/agenda.org")
-		   org-format-latex-options (plist-put org-format-latex-options :scale 2.3)
-		   org-hide-emphasis-markers t
-		   truncate-lines t
-		   org-log-done t
-		   org-src-tab-acts-natively t
-		   org-babel-clojure-backend 'cider)
+       :init (progn
+	       (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+	       (org-babel-do-load-languages
+		'org-babel-load-languages
+		'((ditaa . t)
+		  (plantuml . t)
+		  (gnuplot . t)))
+	       (setq org-agenda-files (list "~/Documents/agenda/main.org" 
+					    "~/programs/jarman/agenda.org" 
+					    "/windows-system/space/windows-agenda.org")
+		     org-format-latex-options (plist-put org-format-latex-options :scale 2.3)
+		     org-hide-emphasis-markers t
+		     ;; list-colors-display
+		     org-todo-keyword-faces '(("PLANNED"    . "dark gray")
+					      ("TODO"       . "indian red")
+					      ("PROCESSING" . "orange")
+					      ("TOREVIEW"   . "deep sky blue")
+					      ("DONE"       . "gray")
+					      ("ARCHIVED"   .  "dim gray"))
+		     org-log-done t
+		     org-src-tab-acts-natively t
+		     org-babel-clojure-backend 'cider
+		     org-ditaa-jar-path "/home/serhii/.config/bin/ditaa.jar"
+		     org-plantuml-jar-path "/home/serhii/.config/bin/plantuml.jar"
+		     org-confirm-babel-evaluate nil
+		     org-startup-with-inline-images nil
+		     ;; org-startup-indented t
+		     ;; org-hide-leading-stars t
+		     ))
        :config 
        (add-hook 'org-mode-hook (lambda ()
 				  ;; (xah-math-input-mode)
@@ -405,24 +393,68 @@
 				  (org-bullets-mode)
 				  (org-mode-pretty-symbols)
 				  (prettify-symbols-mode)
+
 				  ;; (set-face-attribute 'org-block-begin-line nil :foreground (face-background 'org-block-begin-line nil 'default))
 				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
 				  )))
-
    #+end_src
+* Dashboard
+  #+begin_src emacs-lisp
+    (use-package dashboard
+      :demand t
+      :ensure t
+      ;; :diminish dashboard-mode
+      :init
+      ;; (setq dashboard-banner-logo-title "* Live Long And Prosper *")
+      ;; (setq dashboard-startup-banner "~/.emacs.d/Spock.png")
+      (setq dashboard-startup-banner "~/.emacs.d/duck.txt")
+      ;; agenda
+      (setq dashboard-week-agenda nil)
+      (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
+      ;; (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
+      (setq dashboard-match-agenda-entry "-TODO=\"PLANNED\"+@Serhii")
+
+      ;; (setq dashboard-match-agenda-entry "@Serhii")
+      (setq dashboard-item-names '(("Agenda for today:" . "Agenda:")))
+      ;; other
+      (setq dashboard-set-heading-icons nil)
+      (setq dashboard-set-file-icons nil)
+      (setq dashboard-page-separator "\n\n")
+      (setq dashboard-set-init-info nil)
+      (setq dashboard-center-content t)
+      (setq dashboard-show-shortcuts t)
+      (setq dashboard-set-footer nil)
+      (setq dashboard-set-navigator t)
+      (setq dashboard-items '((recents  . 15)
+			      (projects . 20)
+			      (bookmarks . 5) 
+			      (agenda . 100)))
+
+      :config
+      (dashboard-setup-startup-hook))
+  #+end_src
+
+* Visual Regular expression
+  Replace regular regexp on visula regexp
+  #+begin_src emacs-lisp
+  (use-package visual-regexp
+    :bind (("C-c r" . vr/replace)
+           ("C-c q" . vr/query-replace)))
+  #+end_src
+
 * EMMS
   #+begin_src emacs-lisp
-    ;; EMMS
-    ;; (use-package emms
-    ;;       :defer t
-    ;;       :config
-    ;;       (progn  (require 'emms-setup)
-    ;;       (emms-all)
-    ;;       (emms-default-players)
-    ;;       (setq emms-source-file-default-directory "E:\\Music")
-    ;;       (setq emms-playlist-buffer-name "*Music*")
-    ;;       (setq emms-info-asynchronously t)
-    ;;       (emms-add-directory-tree "~/Music/")))
+    (use-package emms
+	  :defer t
+	  :config
+	  (progn  (require 'emms-setup)
+	  (emms-all)
+	  (emms-default-players)
+	  (setq emms-source-file-default-directory "/windows-data/Music/")
+	  (setq emms-playlist-buffer-name "*Music*")
+	  (setq emms-info-asynchronously t)
+	  ;; (emms-add-directory-tree "~/Music/")
+	  ))
   #+end_src
 * java
   #+begin_src emacs-lisp
@@ -571,7 +603,8 @@
     ;;     map))
   #+end_src
 * Reverse-im
-
+  
+  Дана конфігурація дозвоялє використовувати кириличні скорочення на емаксі.
   #+begin_src emacs-lisp
     (use-package reverse-im
       :ensure t
@@ -580,3 +613,4 @@
       :config
       (reverse-im-mode t))
   #+end_src
+  

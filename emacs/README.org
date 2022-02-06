@@ -4,30 +4,35 @@
   
 ** Emacs in server mode
 
-  Run emacs in server mode, to file 
+  If you want up emacs in server mode, you just need to add command belove to some start-up file. For example ~.Xprofile~, or another place in system initilization queue.
  
   #+begin_src sh
     /usr/bin/emacs --daemon &
   #+end_src
 
-  For editing something just make shortcuts belove. 
+  When you want to edit something, or open dired, or ivoke some command, use ~emacsclient~
    
   #+begin_src sh
+    # edit file "some.txt"
     /usr/bin/emacsclient -c -a "emacs" "some.txt"
-  #+end_src
- 
-  Also convince to create some alias to that comment in ~.bashrc~, ~.xprofile~ ... somewhere in script which invoked when system start. 
- 
-  #+begin_src sh
+    # open dired in place
+    /usr/bin/emacsclient -c -a '' ~/Documents/
+    # Eval `ranger` file manager
+    /usr/bin/emacsclient -c -a emacs --eval '(ranger)'
+    
+    # But you always can do some aliaces 
+    # for open file or command in easy way
     alias emdit="emacsclient -c -a emacs"
+    alias emdit-nw="emacsclient -nw -c -a emacs"
+    alias emcalc="emacs -f full-calc"
+    alias emcalc-nw="emacs -nw -f full-calc"
   #+end_src
-
-  If you want to use emacsclient to open some files in =nautilus= or make client mode of emacs as desktop icon, you need to create in path ~/usr/share/applications/~ or =~/.local/share/applications/= file with name [[https://github.com/SerhiiRI/config-files/blob/master/emacs/emacsclient.desktop][emacsclient.desktop]], which being visible from GTK toolkits
+ 
+  If you want to use emacsclient to open some files in =nautilus= or make client mode of emacs as desktop icon, you need to create in path =/usr/share/applications/= or =~/.local/share/applications/= file with name [[https://github.com/SerhiiRI/config-files/blob/master/emacs/emacsclient.desktop][emacsclient.desktop]], which being visible from GTK toolkits
 
 ** Emacs daemon 
 
   Alternative way, you can create Unit file [[https://github.com/SerhiiRI/config-files/blob/master/emacs/emacs.service][emacs.service]]. All you need to do is put file to path =~/.config/systemd/user/emacs.service= 
-  
   After that turn on service in systemd:
   
   #+begin_src sh

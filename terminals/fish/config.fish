@@ -55,14 +55,15 @@ function keyboard-preset-warp
 	 keyboard-no-caps
 	 keyboard-cursor-rate-180-120
 end
-function update_nitrogen
-	 nitrogen --restore
-end
 
 
 #-------------------#
 # USEFULL FUNCTIONS #
 #-------------------#
+
+function update_nitrogen
+	 nitrogen --restore
+end
 
 function fix-ntfs
 	sudo ntfsfix /dev/nvme0n1p2

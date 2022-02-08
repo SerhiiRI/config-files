@@ -41,33 +41,20 @@ alias emcalc-nw="emacs -nw -f full-calc"
 function keyboard-no-caps
 	 setxkbmap -option "ctrl:nocaps"
 end
-
-function keyboard-cursor-rate-300-50
-	 xset r rate 300 50
-end
-function keyboard-cursor-rate-300-100
-	 xset r rate 300 100
-end
-function keyboard-cursor-rate-250-75
-	 xset r rate 250 75
-end
-function keyboard-cursor-rate-200-50
-	 xset r rate 200 50
-end
 function keyboard-cursor-rate-200-100
 	 xset r rate 200 100
 end
-
+function keyboard-cursor-rate-180-120
+	 xset r rate 180 120
+end
 function keyboard-preset-default
 	 keyboard-no-caps
 	 keyboard-cursor-rate-200-100
 end
-
 function keyboard-preset-warp
 	 keyboard-no-caps
-	 keyboard-cursor-rate-300-50
+	 keyboard-cursor-rate-180-120
 end
-
 function update_nitrogen
 	 nitrogen --restore
 end

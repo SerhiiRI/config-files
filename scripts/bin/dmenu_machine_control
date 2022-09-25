@@ -9,8 +9,6 @@
 #               Simon Ingelsson
 #               HostGrady
 
-CONFIG_EDITOR="emacsclient -c -a 'emacs'"
-
 declare -a options=(
     "poweroff"
     "reboot"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-TERM="urxvt -e sh -c"
+# TERM="urxvt -e sh -c"
+TERM="gnome-terminal -e "
 declare -a options=(
 	"mocp - media player server"
 	"htop - resource manager"
@@ -9,7 +10,7 @@ declare -a options=(
 	"quit"
 )
 
-bb nrepl-server
+# bb nrepl-server
 choice=$(printf '%s\n' "${options[@]}" | dmenu -i -l 20 -sb '#5a8033' -p 'Choose CLI program')
 
 if [[ "$choice" == "quit" ]]; then
@@ -22,7 +23,8 @@ elif [ "$choice" ]; then
     elif [[ "${progrm}" == "mocp" ]]; then
     $TERM "${progrm} -T tty"
     elif [[ "${progrm}" == "fcodevpn" ]]; then
-    $TERM "sudo openvpn --config $HOME/fcode/docs/client.ovpn"
+    $TERM "$HOME/fcode/docs/run_vpn.sh"
+    #$TERM "sudo openvpn --config $HOME/fcode/docs/client.ovpn --auth-user-pass $HOME/fcode/docs/pass.txt" 
     # elif [[ "${progrm}" == "babashka" ]]; then
     # $TERM "bb nrepl-server"
     else

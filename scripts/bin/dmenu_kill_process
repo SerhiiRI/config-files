@@ -2,13 +2,14 @@
 
 # dmenu theming
 lines="-l 20"
-# font="-fn Inconsolata-13"
+font="-fn UbuntuMono:style=bold:size=10 "
 # colors="-nb #2C323E -nf #9899a0 -sb #BF616A -sf #2C323E"
-colors="-sb #82173B"
+colors="-sb #82173B -mf #ffffff -uf #Ff4500"
+high="-h 20"
 
 selected="$(ps -a -u $USER | \
             dmenu -i -p "Type to search and select process to kill" \
-            $lines $colors $font | \
+            $lines $colors $font $high | \
             awk '{print $1" "$4}')"; 
 
 if [[ ! -z $selected ]]; then

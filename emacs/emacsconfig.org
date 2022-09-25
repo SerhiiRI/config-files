@@ -6,7 +6,6 @@
 
 * Main Emacs Configuration
   Configuration of this block contains only non-package configuration, or only package system configuration
-
 ** always Split new buffer vertical  
    #+begin_src emacs-lisp
      ;; (setq split-height-threshold nil
@@ -21,6 +20,7 @@
      (scroll-bar-mode -1)
      (tool-bar-mode   -1)
      (menu-bar-mode   -1)
+     ;; (set-fringe-mode 0)
    #+end_src
 
 ** Modebar
@@ -60,8 +60,9 @@
        (other-window -1))
      (global-set-key (kbd "<C-tab>") 'next-buffer)
      (global-set-key (kbd "<C-iso-lefttab>") 'previous-buffer)
-     (global-set-key (kbd "M-p") 'other-window)
-     (global-set-key (kbd "M-n") 'myprevious-window)
+     ;; (global-set-key (kbd "M-p") 'other-window)
+     ;; (global-set-key (kbd "M-n") 'myprevious-window)
+     (global-set-key (kbd "C-x S-o") 'myprevious-window)
      (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
      (global-set-key (kbd "C-c w") 'writeroom-mode)
      (global-set-key (kbd "C-'") '(lambda () (interactive) (browse-url "www.google.com.pl")))
@@ -71,10 +72,12 @@
      ;; (global-set-key (kbd "C-c t") 'neotree-toggle)
    #+end_src
 
-** Autocomplete 
+** Autocomplete
    #+begin_src emacs-lisp
-     (use-package auto-complete-config
-       :config(ac-config-default))
+     (use-package auto-complete
+       :config
+       (ac-config-default)
+       (setq ac-sources (append ac-sources '(ac-source-yasnippet))))
    #+end_src
    
 ** Text manipulation
@@ -115,7 +118,7 @@
       (global-set-key (kbd "M-S-<down>") 'move-text-down)
     #+end_src
     
-** Small tips function 
+** Small tips function
 
    #+begin_src emacs-lisp
      (defun my/copy-buffer-file-name ()
@@ -133,6 +136,27 @@
    #+begin_src emacs-lisp
      (add-hook 'artist-mode-hook (lambda () (setq indent-tabs-mode nil)))
    #+end_src
+
+** Theme changer
+   #+begin_src emacs-lisp
+     ;; (defun toggle-theme (theme)
+     ;;   (if (eq (car custom-enabled-themes) theme)
+     ;;       (disable-theme theme)
+     ;;     ;; (enable-theme theme)
+     ;;     (load-theme theme)))
+
+     (defun toggle-theme (theme)
+       (progn
+	(mapcar (lambda (thm) (disable-theme thm)) custom-enabled-themes)
+	(load-theme theme)))
+
+     (global-set-key (kbd "<f5>") (lambda () (interactive) (toggle-theme 'dracula)))
+     (global-set-key (kbd "<f6>") (lambda () (interactive) (toggle-theme 'chyla)))
+   #+end_src
+** GLOBAL M-x
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<f7>") 'helm-M-x)
+#+end_src
 
 * Modeline 
   #+begin_src emacs-lisp
@@ -161,7 +185,8 @@
 	:defer 3
 	:bind (("<f8>" . neotree-toggle)
 	       ;; ("<f9>" . neotree-toggle-or-open-file-dir)
-	       ("C-c t" . neotree-toggle)))
+	       ;; ("C-c t" . neotree-toggle)
+	       ))
 
     #+end_src
 
@@ -188,26 +213,7 @@
 	    ("<f10>"   . treemacs-bookmark)))
   #+end_src
 
-* Ivy
-  #+begin_src emacs-lisp 
-  ;; (ivy-mode 1)
-  ;;   (setq ivy-use-virtual-buffers t)
-  ;; (setq enable-recursive-minibuffers t)
-  #+end_src
-
-* SMEX
-  #+begin_src emacs-lisp 
-    ;; (use-package smex
-    ;;   :after package
-    ;;   :ensure t
-    ;;   :init
-    ;;   (setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
-    ;;   (smex-initialize)
-    ;;   (global-set-key (kbd "M-x") 'smex)
-    ;;   (global-set-key (kbd "M-X") 'smex-major-mode-commands))
-  #+end_src
-
-* HELM
+* Projectile+Helm
 
   #+begin_src emacs-lisp 
     (use-package helm 
@@ -215,6 +221,7 @@
       :demand t
       :preface (require 'helm-config)
       :bind (("M-x" . helm-M-x)
+	     ;; ("C-i" . helm-M-x)
 	     ;; ("C-x C-f" . helm-find-files)
 	     ("C-x C-f" . helm-find-files)
 	     ("C-." . helm-imenu-in-all-buffers)
@@ -229,6 +236,26 @@
 	     )
       :config
       (helm-mode 1))
+
+    (use-package projectile
+      :ensure t
+      :init
+      (projectile-mode +1)
+      :bind (:map projectile-mode-map
+		  ;; ("s-p" . projectile-command-map)
+		  ("C-c p" . projectile-command-map)))
+
+    (use-package helm-projectile
+      :ensure t
+      :after (helm projectile)
+      :init
+      (helm-projectile-on))
+
+    (use-package helm-ag
+      :ensure t
+      :after (helm projectile)
+      :custom
+      (helm-ag-base-command "ag --hidden --nocolor --nogroup --ignore-case"))
   #+end_src
 
 * IDO
@@ -240,6 +267,28 @@
       (ido-mode t))
   #+end_src
   
+* yasnippets
+  #+begin_src emacs-lisp
+    ;; (require 'yasnippet)
+
+    ;; (setq yas-snippet-dirs
+    ;;       '("~/.emacs.d/snippets"
+    ;; 	"~/fcode/projects/qbp1/backend2/serhii/snippets"))
+
+    ;; (defun ac-common-setup ()
+    ;; (setq ac-sources (append ac-sources '(ac-source-yasnippet))))
+
+    (use-package yasnippet
+      :ensure t
+      :init
+  
+      :bind (("C-c i" . yas-insert-snippet))
+      :config
+      (setq yas-snippet-dirs
+	    '("~/.emacs.d/snippets"
+	      "~/fcode/projects/qbp1/backend2/serhii/snippets"))
+      (yas-global-mode 1))
+  #+end_src
 * Lisps languages
   #+begin_src emacs-lisp
     
@@ -276,6 +325,7 @@
        "Make some word or string show as pretty Unicode symbols"
        (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
 				      ("fn" . ?λ)
+				      ("fe" . ?η)
 				      ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘ ⇩ ⇘ ⯆ ⯅ 🭶 ⯇ ⯈
 				      ;; Greek alphabet 
 				      ;; Α α, Β β, Γ γ, Δ δ, Ε ε, Ζ ζ, Η η, Θ θ, Ι ι, Κ κ, Λ λ, Μ μ, Ν ν, 
@@ -285,13 +335,14 @@
 				      ;; ("=>" . ?⇒)
 				      ("defmulti" . ?Ƒ)
 				      ("defmethod" . ?ƒ)
-				      ("/=" . ?≠)("!=" . ?≠)
-				      ("==" . ?≡)("not" . ?!)
-				      ("<=" . ?≤)(">=" . ?≥)
-				      ("comp" . ?υ)("partial" . ?ρ)
-				      ("and" . ?∧)("&&" . ?∧)
-				      ("or" . ?∨)("||" . ?∨))))
+				      ("/=" . ?≠)   ("!=" . ?≠)
+				      ("==" . ?≡)   ("not" . ?!)
+				      ("<=" . ?≤)   (">=" . ?≥)
+				      ("comp" . ?υ) ("partial" . ?ρ)
+				      ("and" . ?∧)  ("&&" . ?∧)
+				      ("or" . ?∨)   ("||" . ?∨))))
      (defun personal-clojure-mode-hook ()
+       (set-window-margins (selected-window) 2 2)
        (clojure-lisp-pretty-symbols)
        (lisp-mode-hook))
      (use-package clojure-mode
@@ -371,8 +422,7 @@
 				      ("#+begin_src" ?⯈)
 				      ("#+end_src" ?⯅)
 				      ("#+RESULTS:" ?=))))
-
-
+     
      (use-package org
        :bind (("C-c l" . org-store-link)
 	      ("C-c a" . org-agenda))
@@ -380,7 +430,6 @@
 	       (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 	       (org-babel-do-load-languages
 		'org-babel-load-languages
-
 		'((shell . t)
 		  (python . t)
 		  (ditaa . t)
@@ -416,6 +465,7 @@
 				  (org-bullets-mode)
 				  (org-mode-pretty-symbols)
 				  (prettify-symbols-mode)
+     
 				  ;; (set-face-attribute 'org-block-begin-line nil :foreground (face-background 'org-block-begin-line nil 'default))
 				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
 				  )))
@@ -482,34 +532,41 @@
 * java
 
   #+begin_src emacs-lisp
+    (use-package lsp-java
+      :config
+      (add-hook 'java-mode-hook #'lsp)
+      (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
     ;; (use-package lsp-java
+    ;;   :ensure t
+    ;;   :defer t
+    ;;   :hook (lsp-mode . (lambda ()
+    ;; 		      (let ((lsp-keymap-prefix "C-c l"))
+    ;; 			(lsp-enable-which-key-integration))))
+    ;;   :init
+    ;;   (setq lsp-keep-workspace-alive nil
+    ;; 	lsp-signature-doc-lines 5
+    ;; 	lsp-idle-delay 0.5
+    ;; 	lsp-prefer-capf t
+    ;; 	lsp-client-packages nil)
     ;;   :config
-    ;;   (add-hook 'java-mode-hook #'lsp))
+    ;;   (add-hook 'java-mode-hook #'lsp)
+    ;;   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
   #+end_src
-* Projectile with helm
-  #+begin_src emacs-lisp
-    (use-package projectile
-      :ensure t
-      :init
-      (projectile-mode +1)
-      :bind (:map projectile-mode-map
-		  ;; ("s-p" . projectile-command-map)
-		  ("C-c p" . projectile-command-map)))
-
-    (use-package helm-projectile
-      :ensure t
-      :after (helm projectile)
-      :init
-      (helm-projectile-on))
-  #+end_src
-* Firm code 
-  Code
-** Freshcode
+* Cider
+** config
    #+begin_src emacs-lisp
-     (setq cider-known-endpoints
-	   '(("platform-repl-back" "0.0.0.0" "3012")
-	     ("babashka" "0.0.0.0" "1667")
-	     ("platform-repl-front" "0.0.0.0" "8333")))
+     ;; (setq cider-known-endpoints
+     ;;       '(("platform-repl-back" "0.0.0.0" "3012")
+     ;; 	("babashka" "0.0.0.0" "1667")
+     ;; 	("platform-repl-front" "0.0.0.0" "8333")))
+
+     (use-package cider
+       :bind (("C-M-S-i" . cider-inspect-last-result))
+       :init
+       (setq cider-known-endpoints
+	     '(("platform-repl-back" "0.0.0.0" "3012")
+	       ("platform-repl-front" "0.0.0.0" "8333")
+	       ("local-babashka" "0.0.0.0" "1667"))))
 
      ;; (setq cider-fcode-figwheel-nrepl
      ;;       )
@@ -571,28 +628,37 @@
   
   My first on hand sql connection manager
   #+begin_src emacs-lisp
+    ;; (setq sql-connection-alist
+    ;;       '((bdm_demo_dev_v2
+    ;; 	 (sql-product 'mysql)
+    ;; 	 (sql-server "127.0.0.1")
+    ;; 	 (sql-user "root")
+    ;; 	 (sql-password "root")
+    ;; 	 (sql-database "bdm_demo_dev_v2")
+    ;; 	 (sql-port 3406))
+    ;; 	(trashpanda-team-dell
+    ;; 	 (sql-product 'mysql)
+    ;; 	 (sql-server "trashpanda-team.ddns.net")
+    ;; 	 (sql-user "root")
+    ;; 	 (sql-password "1234")
+    ;; 	 (sql-database "jarman")
+    ;; 	 (sql-port 3307))
+    ;; 	(trashpanda-rpi
+    ;; 	 (sql-product 'mysql)
+    ;; 	 (sql-server "trashpanda-team.ddns.net")
+    ;; 	 (sql-user "jarman")
+    ;; 	 (sql-password "dupa")
+    ;; 	 (sql-database "jarman")
+    ;; 	 (sql-port 3306))))
+
     (setq sql-connection-alist
-	  '((bdm_demo_dev_v2
+	  '((bdm-demo
 	     (sql-product 'mysql)
-	     (sql-server "127.0.0.1")
+	     (sql-server "localhost")
 	     (sql-user "root")
 	     (sql-password "root")
 	     (sql-database "bdm_demo_dev_v2")
-	     (sql-port 3406))
-	    (trashpanda-team-dell
-	     (sql-product 'mysql)
-	     (sql-server "trashpanda-team.ddns.net")
-	     (sql-user "root")
-	     (sql-password "1234")
-	     (sql-database "jarman")
-	     (sql-port 3307))
-	    (trashpanda-rpi
-	     (sql-product 'mysql)
-	     (sql-server "trashpanda-team.ddns.net")
-	     (sql-user "jarman")
-	     (sql-password "dupa")
-	     (sql-database "jarman")
-	     (sql-port 3306))))
+	     (sql-port 3406))))
 
     (defmacro myflet (bindings &rest body)
       "Works like the old `flet'. Does not validate form structure."
@@ -615,7 +681,8 @@
 
     (defun sql-connect-bdm-demo ()
       (interactive)
-      (sql-connect-preset 'bdm_demo_dev_v2))
+      (sql-connect-preset 'bdm_demo))
+
   #+end_src
 * Yafolding
   #+begin_src emacs-lisp
@@ -637,7 +704,6 @@
       :config
       (reverse-im-mode t))
   #+end_src
-
 * Which Key 
   #+begin_src emacs-lisp
     (which-key-mode)
@@ -655,5 +721,3 @@
     ;;     (counsel-linux-app)
     ;;     (delete-frame)))
   # +end_src
-
-

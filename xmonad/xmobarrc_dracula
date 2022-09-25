@@ -1,0 +1,119 @@
+-- -*- mode: haskell; mode: rainbow; -*-
+
+-- high-color   = "darkgreen"
+-- low-color    = "darkred"
+-- normal-color = "darkorange"
+
+Config { 
+
+  -- font =      "xft:Bitstream Vera Sans Mono:size=9:bold:antialias=true"
+  -- font =      "xft:Ubuntu Mono:bold:size=12:antialias=true"
+  -- font =      "xft:Work Sans:size=11:antialias=true"
+  -- font =      "xft:Liberation Mono:size=10:antialias=true"
+  -- font =      "xft:Droid Sans Mono:size=10:antialias=true"
+  -- font =      "xft:Open Sans:bold:size=11:antialias=true"
+    font         = "xft:Consolas:bold:size=11:antialias=true"
+  , bgColor      = "#282a36"
+  , fgColor      = "#f8f8f2"
+  , position     = TopSize L 100 23
+  , iconRoot     = ".xmonad/"  -- default: "."
+  , border =       BottomB
+  , borderColor =  "black"
+  -- layout
+  , sepChar =  "%"   -- delineator between plugin names and straight text
+  -- , sepChar = "<fc=#666666>%</fc>"
+  , alignSep = "}{"  -- separator between left-right alignment
+  , template = " <icon=haskell_20.xpm/> <fc=#444444>:</fc> %UnsafeStdinReader% }{ %dynnetwork% <fc=#444444>|</fc> %battery% <fc=#444444>|</fc> %multicpu% <fc=#444444>|</fc> %memory% <fc=#444444>|</fc> %date% <fc=#444444>|</fc> Volume %default:Master% %default:Capture%<fc=#444444>|</fc> %kbd% "
+    -- general behavior
+  , lowerOnStart     = True    -- send to bottom of window stack on start
+  , hideOnStart      = False   -- start with window unmapped (hidden)
+  , allDesktops      = False   -- show on all desktops
+  , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+  , pickBroadest     = False   -- choose widest display (multi-monitor)
+  , persistent       = True    -- enable/disable hiding (True = disabled)
+  
+  -- plugins
+  --   Numbers can be automatically colored according to their value. xmobar
+  --   decides color based on a three-tier/two-cutoff system, controlled by
+  --   command options:
+  --     --Low sets the low cutoff
+  --     --High sets the high cutoff
+  --
+  --     --low sets the color below --Low cutoff
+  --     --normal sets the color between --Low and --High cutoffs
+  --     --High sets the color above --High cutoff
+  --
+  --   The --template option controls how the plugin is displayed. Text
+  --   color can be set by enclosing in <fc></fc> tags. For more details
+  --   see http://projects.haskell.org/xmobar/#system-monitor-plugins.
+  , commands = 
+      -- network activity monitor (dynamic interface resolution)
+      [ Run DynNetwork   [ "--template" , "<dev>:<fc=#666666> in </fc> <rx> kB <fc=#666666> out</fc> <tx> kB"
+                         , "--Low"      , "1000000"       -- units: B/s
+                         , "--High"     , "2000000"       -- units: B/s
+                         , "--low"      , "#50fa7b"
+                         , "--normal"   , "#f8f8f2"
+                         , "--high"     , "#ff79c6"
+                         , "--", "--devices", "wlp2s0,enp0s31f6"
+                         ] 10
+    
+        -- cpu activity monitor
+      , Run MultiCpu     [ "--template" , "Cpu <total>%"
+                         , "--Low"      , "50"         -- units: %
+                         , "--High"     , "85"         -- units: %
+                         , "--low"      , "#50fa7b"
+                         , "--normal"   , "#f8f8f2"
+                         , "--high"     , "#ff79c6"
+                         ] 10
+    
+        -- cpu core temperature monitor
+        -- , Run CoreTemp       [ "--template" , "Temp: <core0>°C <fc=#666666>|</fc> <core1>°C"
+        --                      , "--Low"      , "70"        -- units: °C
+        --                      , "--High"     , "80"        -- units: °C
+        --                      , "--low"      , "#50fa7b"
+        --                      , "--normal"   , "#f8f8f2"
+        --                      , "--high"     , "#ff79c6"
+        --                      ] 50
+                          
+        -- memory usage monitor
+      , Run Memory       [ "--template" ,"Mem <usedratio>%"
+                         , "--Low"      , "30"        -- units: %
+                         , "--High"     , "90"        -- units: %
+                         , "--low"      , "#50fa7b"
+                         , "--normal"   , "#f8f8f2"
+                         , "--high"     , "#ff79c6"
+                         ] 10
+
+        -- battery monitor
+      , Run Battery      [ "--template" , "Battery <acstatus>"
+                         , "--Low"      , "30"        -- units: %
+                         , "--High"     , "80"        -- units: %
+                         , "--low"      , "#ff79c6"
+                         , "--normal"   , "#f8f8f2"
+                         , "--high"     , "#50fa7b"
+                         
+                         , "--" -- battery specific options
+                           -- discharging status
+                           -- , "-o"	, "<left>% (<timeleft>)"
+                         , "-o"	, "<left>% "
+                           -- AC "on" status
+                         , "-O"	, "<fc=#bd93f9>Charging</fc>"
+                           -- charged status
+                         , "-i"	, "<fc=#f8f8f2>Charged</fc>"
+                         ] 50
+
+        -- time and date indicator 
+        --   (%F = y-m-d date, %a = day of week, %T = h:m:s time)
+      , Run Date         "<fc=#ff79c6>%F %T</fc>" "date" 10
+      , Run Volume       "default" "Master"  [ "--template" , "<volume>% <status>"] 10
+      , Run Volume       "default" "Capture" [ "--template" , "<volume>% <status>"] 10                         
+        
+        -- keyboard layout indicator
+      , Run Kbd          [ ("ua" , "UA")
+                         , ("pl" , "PL")
+		         , ("us" , "US")
+                         ]
+      , Run UnsafeStdinReader  
+      ]
+   }
+

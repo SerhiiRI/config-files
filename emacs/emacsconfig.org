@@ -5,11 +5,13 @@
 #+STARTUP: overview
 
 * Main Emacs Configuration
-  Configuration of this block contains only non-package configuration, or only package system configuration
+Configuration of this block contains only non-package configuration, or only package system configuration
 ** always Split new buffer vertical  
    #+begin_src emacs-lisp
-     ;; (setq split-height-threshold nil
-     ;;       split-width-threshold 160)
+     (setq split-width-threshold 0)
+     (setq split-height-threshold nil)
+	  ;; (setq split-height-threshold nil
+	  ;;       split-width-threshold 160)
    #+end_src
 ** Emacs bars
    Show or hide emacs UΙ component. 
@@ -36,6 +38,7 @@
      (setq make-backup-files nil)
      (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
      (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+     (global-unset-key (kbd "C-z"))
    #+end_src
    X window clipboard buffer.
    #+begin_src emacs-lisp
@@ -52,26 +55,12 @@
 	(toggle-indicate-empty-lines))
    #+end_src
    
-** Global keymap
-   Global function 
+** Moving
    #+begin_src emacs-lisp
-     (defun myprevious-window ()
+     (defun other-window-back ()
        (interactive)
        (other-window -1))
-     (global-set-key (kbd "<C-tab>") 'next-buffer)
-     (global-set-key (kbd "<C-iso-lefttab>") 'previous-buffer)
-     ;; (global-set-key (kbd "M-p") 'other-window)
-     ;; (global-set-key (kbd "M-n") 'myprevious-window)
-     (global-set-key (kbd "C-x S-o") 'myprevious-window)
-     (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
-     (global-set-key (kbd "C-c w") 'writeroom-mode)
-     (global-set-key (kbd "C-'") '(lambda () (interactive) (browse-url "www.google.com.pl")))
-     ;; (global-set-key (kbd "C-\"") '(lambda () (interactive) (eww "www.google.com.pl")))
-     ;; (global-set-key (kbd "C-x g") 'magit-status)
-     ;; (global-set-key (kbd "<f8>") 'neotree-toggle)
-     ;; (global-set-key (kbd "C-c t") 'neotree-toggle)
    #+end_src
-
 ** Autocomplete
    #+begin_src emacs-lisp
      (use-package auto-complete
@@ -137,7 +126,71 @@
      (add-hook 'artist-mode-hook (lambda () (setq indent-tabs-mode nil)))
    #+end_src
 
-** Theme changer
+** Font changing
+
+#+begin_src emacs-lisp 
+  (defun riser/set-my-custom-font (&rest args)
+    "Set 'default face font. 
+   :family - String font name 
+   :height - (default 110) String font size
+   :wieght - (default 'normal) Symbol can be 'bold | 'normal | 'italic
+   :width - (default 'normal) Symbol.
+
+  Example
+   (riser/set-my-custom-font
+    :family \"Source Code Pro\"
+    :height 
+
+  See also
+    https://www.gnu.org/software/emacs/manual/html_node/elisp/Low_002dLevel-Font.html
+    "
+    (let ((family (plist-get args :family))
+	  (height (plist-get args :height))
+	  (f-weight (plist-get args :weight))
+	  (f-width (plist-get args :width)))
+      (unless family (error "riser/set-my-custom-font. Argument `:family' hasn't been setted"))
+      (unless height (setq height 110))
+      (unless f-weight (setq f-weight 'normal))
+      (unless f-width (setq f-width 'normal))
+      (set-face-attribute 'default nil
+			  :family family
+			  :height height
+			  :weight f-weight
+			  :width f-width)))
+
+
+  (defun customize-font-SourceCodePro ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "Source Code Pro"))
+
+  (defun customize-font-JetBrains ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "JetBrains Mono"))
+
+  (defun customize-font-Hack ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "Hack"))
+
+  (defun customize-font-Monospace ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "Monospace"))
+
+  (defun customize-font-IBMPlexMono ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "IBM Plex Mono"))
+
+  (defun customize-font-FiraCode ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "Fira Code"))
+#+end_src
+
+** Theme changing
    #+begin_src emacs-lisp
      ;; (defun toggle-theme (theme)
      ;;   (if (eq (car custom-enabled-themes) theme)
@@ -147,15 +200,59 @@
 
      (defun toggle-theme (theme)
        (progn
-	(mapcar (lambda (thm) (disable-theme thm)) custom-enabled-themes)
-	(load-theme theme)))
+	 (mapcar (lambda (thm) (disable-theme thm)) custom-enabled-themes)
+	 (load-theme theme)))
 
-     (global-set-key (kbd "<f5>") (lambda () (interactive) (toggle-theme 'dracula)))
-     (global-set-key (kbd "<f6>") (lambda () (interactive) (toggle-theme 'chyla)))
+     (defun customize-dracula () (interactive) (toggle-theme 'dracula))
+     (defun customize-chyla () (interactive) (toggle-theme 'chyla))
+     (defun customize-freshcode-light () (interactive) (toggle-theme 'freshcode-light))
+
+     (defun customize-frame-opacity ()
+       (interactive)
+       (let* ((choices '(("50"  . 50)
+			 ("70"  . 70)
+			 ("100" . 100)
+			 ("90"  . 90)))
+	      (choice
+	       (alist-get
+		(completing-read "Choose: " choices)
+		choices nil nil 'equal)))
+	 (if choice
+	     (set-frame-parameter nil 'alpha-background choice)
+	   (message "Wrong choice"))))
+
    #+end_src
-** GLOBAL M-x
+
+** hightlight something
+   #+begin_src emacs-lisp
+     (defun riser/rainbow-x-color-luminance (color)
+       "Calculate the relative luminance of a color string (e.g. \"#ffaa00\", \"blue\").
+     Return a value between 0 and 1."
+       (let* ((values (x-color-values color))
+	      (r (/ (car values) 256.0))
+	      (g (/ (cadr values) 256.0))
+	      (b (/ (caddr values) 256.0)))
+	 (rainbow-color-luminance r g b)))
+
+     (defun highlight-something (begin end)
+       (interactive "r")
+       (let ((color (string-trim (helm-colors))))
+	 (message "Highlight from %d to %d with color %s" begin end color)
+	 (put-text-property
+	  begin end
+	  'face `((:foreground ,(if (> 0.5 (riser/rainbow-x-color-luminance color))
+				    "white" "black"))
+		  (:background ,color)))))
+   #+end_src
+
+** Large UI
 #+begin_src emacs-lisp
-  (global-set-key (kbd "<f7>") 'helm-M-x)
+  (defun riser/make-large-ui (num)
+    (interactive "nChoose font size 100-150: ")
+    (if (numberp num)
+     (let ((size (if (< 99 num 151) num 100)))
+       (set-face-attribute 'default nil :height num))
+     (message "wrong argument %s" num)))
 #+end_src
 
 * Modeline 
@@ -219,7 +316,6 @@
     (use-package helm 
       :ensure t
       :demand t
-      :preface (require 'helm-config)
       :bind (("M-x" . helm-M-x)
 	     ;; ("C-i" . helm-M-x)
 	     ;; ("C-x C-f" . helm-find-files)
@@ -254,6 +350,7 @@
     (use-package helm-ag
       :ensure t
       :after (helm projectile)
+      :bind (("C-M-s" . helm-do-ag-this-file))
       :custom
       (helm-ag-base-command "ag --hidden --nocolor --nogroup --ignore-case"))
   #+end_src
@@ -280,9 +377,7 @@
 
     (use-package yasnippet
       :ensure t
-      :init
-  
-      :bind (("C-c i" . yas-insert-snippet))
+      :bind (("C-z i" . yas-insert-snippet))
       :config
       (setq yas-snippet-dirs
 	    '("~/.emacs.d/snippets"
@@ -291,12 +386,13 @@
   #+end_src
 * Lisps languages
   #+begin_src emacs-lisp
-    
+
     (defun lisp-mode-hook ()
       "enable some plugins after init mode"
       (paredit-mode)
       (prettify-symbols-mode)
-      (rainbow-delimiters-mode))
+      ;; (rainbow-delimiters-mode)
+      (highlight-parentheses-mode))
   #+end_src
 ** Emacs lisp
 *** Emacs mode   
@@ -321,6 +417,9 @@
    #+end_src
 ** Clojure
    #+begin_src emacs-lisp
+     (use-package flycheck-clj-kondo
+       :ensure t)
+
      (defun clojure-lisp-pretty-symbols ()
        "Make some word or string show as pretty Unicode symbols"
        (setq prettify-symbols-alist '(;; ("lambda" . ?λ)
@@ -344,10 +443,40 @@
      (defun personal-clojure-mode-hook ()
        (set-window-margins (selected-window) 2 2)
        (clojure-lisp-pretty-symbols)
+       (add-to-list 'flycheck-checkers 'clj-kondo-clj)
+       (add-to-list 'flycheck-disabled-checkers 'clojure-cider-eastwood)
+       ;; (flycheck-mode t)
        (lisp-mode-hook))
+
      (use-package clojure-mode
        :defer t
-       :config (add-hook 'clojure-mode-hook 'personal-clojure-mode-hook))
+       :config
+       (require 'flycheck-clj-kondo)
+       (add-hook 'clojure-mode-hook 'personal-clojure-mode-hook))
+   #+end_src
+
+   #+begin_src ;;
+     (defvar LSP-COMMAND-PREFIX "C-j")
+     (use-package lsp-ui
+       :ensure t)
+     (use-package lsp-mode
+       :ensure t
+       :bind ("<tab>" . company-indent-or-complete-common)
+       :hook ((clojure-mode . lsp)
+	      (clojurec-mode . lsp)
+	      (clojurescript-mode . lsp)
+	      (lsp-mode . (lambda ()
+			    (let ((lsp-keymap-prefix LSP-COMMAND-PREFIX))
+			      (lsp-enable-which-key-integration)
+			      (auto-complete-mode -1)))))
+       :config
+       (define-key lsp-mode-map (kbd LSP-COMMAND-PREFIX) lsp-command-map)
+       (setq lsp-headerline-breadcrumb-enable nil)
+       (dolist (m '(clojure-mode
+		    clojurec-mode
+		    clojurescript-mode
+		    clojurex-mode))
+	 (add-to-list 'lsp-language-id-configuration `(,m . "clojure"))))
    #+end_src
 ** Common lisp
    #+begin_src emacs-lisp
@@ -422,7 +551,7 @@
 				      ("#+begin_src" ?⯈)
 				      ("#+end_src" ?⯅)
 				      ("#+RESULTS:" ?=))))
-     
+
      (use-package org
        :bind (("C-c l" . org-store-link)
 	      ("C-c a" . org-agenda))
@@ -436,9 +565,9 @@
 		  (sql . t)
 		  (plantuml . t)
 		  (gnuplot . t)))
-	       (setq org-agenda-files (list "~/Documents/agenda/main.org" 
-					    "~/programs/jarman/agenda.org" 
-					    "/windows-system/space/windows-agenda.org")
+	       (setq org-agenda-files (list) ;; (list "~/Documents/agenda/main.org" 
+				      ;;       "~/programs/jarman/agenda.org" 
+				      ;;       "/windows-system/space/windows-agenda.org")
 		     org-format-latex-options (plist-put org-format-latex-options :scale 2.3)
 		     org-hide-emphasis-markers t
 		     ;; list-colors-display
@@ -465,10 +594,22 @@
 				  (org-bullets-mode)
 				  (org-mode-pretty-symbols)
 				  (prettify-symbols-mode)
-     
+
 				  ;; (set-face-attribute 'org-block-begin-line nil :foreground (face-background 'org-block-begin-line nil 'default))
 				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
 				  )))
+
+     (use-package ox-moderncv
+       :load-path "/home/serhii/.emacs.d/org-cv/"
+       :init (progn
+	       (require 'ox-moderncv)
+	       (require 'ox-awesomecv)))
+
+     (defun export-cv-awesomecv ()
+       (let ((file-name (buffer-file-name (current-buffer))))
+	 (org-export-to-file 'moderncv file-name)
+	 (org-latex-compile file-name)))
+
    #+end_src
 * Dashboard
   #+begin_src emacs-lisp
@@ -532,10 +673,11 @@
 * java
 
   #+begin_src emacs-lisp
-    (use-package lsp-java
-      :config
-      (add-hook 'java-mode-hook #'lsp)
-      (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
+    ;; (use-package lsp-java
+    ;;   :config
+    ;;   (add-hook 'java-mode-hook #'lsp)
+    ;;   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
+
     ;; (use-package lsp-java
     ;;   :ensure t
     ;;   :defer t
@@ -552,77 +694,62 @@
     ;;   (add-hook 'java-mode-hook #'lsp)
     ;;   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
   #+end_src
+
+* Web Mode
+#+begin_src emacs-lisp
+  ;; (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))
+
+  (defun setup-tide-mode ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    (company-mode +1))
+
+  ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+  (use-package tide)
+
+  ;; (use-package tide
+  ;;   :ensure t
+  ;;   :after (typescript-mode company flycheck eldoc)
+  ;;   :hook ((typescript-mode . tide-setup)
+  ;; 	 (typescript-mode . tide-hl-identifier-mode)
+  ;; 	 (before-save . tide-format-before-save))
+
+  (use-package web-mode
+    :mode (("\\.jsx$" .  web-mode)
+	   ("\\.tsx$" .  web-mode))
+    :hook (web-mode . web-mode-log-hook)
+    :config
+    (defun web-mode-log-hook ()
+      (setq web-mode-enable-auto-indentation nil)
+      (when (string-equal "tsx" (file-name-extension buffer-file-name))
+	(setup-tide-mode))))
+
+#+end_src
 * Cider
 ** config
    #+begin_src emacs-lisp
-     ;; (setq cider-known-endpoints
-     ;;       '(("platform-repl-back" "0.0.0.0" "3012")
-     ;; 	("babashka" "0.0.0.0" "1667")
-     ;; 	("platform-repl-front" "0.0.0.0" "8333")))
+     (defun presonal-cider-mode-hook ()
+       (auto-complete-mode -1)
+       (company-mode 1)
+       (add-to-list 'completion-category-defaults '(cider (styles basic))))
 
      (use-package cider
-       :bind (("C-M-S-i" . cider-inspect-last-result))
+       :bind (("C-M-S-i" . cider-inspect-last-result)
+	      ;; ("TAB" . company-indent-or-complete-common)
+	      )
        :init
        (setq cider-known-endpoints
 	     '(("platform-repl-back" "0.0.0.0" "3012")
 	       ("platform-repl-front" "0.0.0.0" "8333")
-	       ("local-babashka" "0.0.0.0" "1667"))))
-
-     ;; (setq cider-fcode-figwheel-nrepl
-     ;;       )
-
-     ;; (defun cider-fcode ()
-     ;;   (interactive)
-     ;;   (save-some-buffers)
-     ;;   (with-current-buffer (cider-current-repl-buffer)
-     ;;     (goto-char (point-max))
-     ;;     (insert cider-fcode-figwheel-nrepl)
-     ;;     (cider-connect-cljs)))
-
-     ;; (defun cider-eval-expression-at-point-in-repl ()
-     ;;   "Sends the preceding expression to the Cider REPL."
-     ;;   (interactive)
-     ;;   (let ((form "(+ 1 2)"))
-     ;;     ;; Strip excess whitespace
-     ;;     (while (string-match "\`\s+\|\n+\'" form)
-     ;;       (setq form (replace-match "" t t form)))
-     ;;     (set-buffer (cider-find-or-create-repl-buffer))
-     ;;     (goto-char (point-max))
-     ;;     (insert form)
-     ;;     (cider-repl-return)))
-     ;; (cider-switch-to-repl-buffer)
-
-     ;; (setq cider-jack-in-dev-profile '("cider" "dev"))
-     ;; (defun cider-jack-in-with-profile ()
-     ;;   (interactive)
-     ;;   (letrec ((profile (read-string (message "Enter profile name(%s): " (string-join cider-jack-in-dev-profile ","))))
-     ;; 	   (lein-params (message "with-profile %s repl :headless" (if (seq-empty-p profile) (string-join cider-jack-in-dev-profile ",") profile))))
-     ;;     (message "lein-params set to: %s" lein-params)
-     ;;     (set-variable 'cider-lein-parameters lein-params)
-     ;;     ;; ;; just a empty parameter
-     ;;     (cider-jack-in '())
-     ;;     (cider-switch-to-repl-buffer)
-     ;;     (cider-insert-in-repl
-     ;;      "(do (use 'figwheel-sidecar.repl-api)
-     ;; 	   (start-figwheel!)
-     ;; 	   (cljs-repl))" t)
-
-     ;;     ;; (with-current-buffer (cider-current-repl-buffer)
-     ;;     ;;   (goto-char (point-max))
-     ;;     ;;   (insert "(do (use 'figwheel-sidecar.repl-api)
-     ;;     ;; 	   (start-figwheel!)
-     ;;     ;; 	   (cljs-repl))")
-     ;;     ;;   ;; (cider-connect-cljs)
-     ;;     ;;   )
-     ;;     ))
-
-
-     ;; (progn  (cider-switch-to-repl-buffer)
-     ;; 	(cider-insert-in-repl
-     ;; 	 "(do (use 'figwheel-sidecar.repl-api)
-     ;; 	   (start-figwheel!)
-     ;; 	   (cljs-repl))" t))
-
+	       ("platform-repl-shadow" "0.0.0.0" "8234")
+	       ("local-babashka" "0.0.0.0" "1667")))
+       :hook (cider-mode . presonal-cider-mode-hook))
    #+end_src
 * SQL Mode
   
@@ -704,13 +831,34 @@
       :config
       (reverse-im-mode t))
   #+end_src
-* Which Key 
+* Which Key
   #+begin_src emacs-lisp
     (which-key-mode)
   #+end_src
+* Olivetti
+#+begin_src emacs-lisp
+  (use-package olivetti
+    :ensure t
+    :bind (("C-'" . olivetti-shrink)
+	   ("C-;" . olivetti-expand))
+    :config
+    (progn
+      (add-hook 'org-mode-hook (lambda () (set-fringe-mode 0)))
+      (add-hook 'text-mode-hook (lambda () (set-fringe-mode 0)))))
+#+end_src
+* Multiple Cursor
+
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :bind (("C->" . mc/mark-next-like-this)
+	   ("C-<" . mc/mark-previous-like-this)
+	   ("C-c C-<" . mc/mark-all-like-this)
+	   ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+#+end_src
+
 * shoot linux app
   
-  # +begin_src emacs-lisp
+  #+begin_src emacs-lisp
     ;; (defun emacs-run-launcher ()
     ;;   "Create and select a frame called emacs-run-launcher which consists only of a minibuffer and has specific dimensions. Run counsel-linux-app on that frame, which is an emacs command that prompts you to select an app and open it in a dmenu like behaviour. Delete the frame after that command has exited"
     ;;   (interactive)
@@ -720,4 +868,75 @@
     ;; 				     (height . 11)))
     ;;     (counsel-linux-app)
     ;;     (delete-frame)))
-  # +end_src
+  #+end_src
+
+* sudo-edit
+#+begin_src emacs-lisp 
+  (use-package sudo-edit
+    :ensure t
+    :bind (("C-x x f" . sudo-edit-find-file)
+	   ("C-x x e" . sudo-edit)))
+#+end_src
+
+* iresize
+#+begin_src emacs-lisp
+  (use-package iresize
+    :bind (:map iresize-mode-map
+		("k" . enlarge-window)
+		("j" . shrink-window)
+		("h" . shrink-window-horizontally)
+		("l" . enlarge-window-horizontally))
+    :config
+    (global-set-key (kbd "C-c C-z") 'iresize-mode))
+#+end_src
+
+* C-z ++
+#+begin_src emacs-lisp
+  ;; -------------
+  ;; Select Themes
+  (global-set-key (kbd "C-z t d") 'customize-dracula)
+  (global-set-key (kbd "C-z t c") 'customize-chyla)
+  (global-set-key (kbd "C-z t f") 'customize-freshcode-light)
+  ;; ------------
+  ;; Select Fonts
+  (global-set-key (kbd "C-z f s") 'customize-font-SourceCodePro)
+  (global-set-key (kbd "C-z f i") 'customize-font-IBMPlexMono)
+  (global-set-key (kbd "C-z f f") 'customize-font-FiraCode)
+  (global-set-key (kbd "C-z f h") 'customize-font-Hack)
+  (global-set-key (kbd "C-z f c") 'customize-font-Monospace)
+  (global-set-key (kbd "C-z f j") 'customize-font-JetBrains)
+  ;; -----------
+  ;; ShortAccess
+  (global-set-key (kbd "C-z u") (lambda () (interactive) (flycheck-mode)))
+  (global-set-key (kbd "C-z n") 'flycheck-next-error)
+  (global-set-key (kbd "C-z p") 'flycheck-previous-error)
+  (global-set-key (kbd "C-z l") 'flycheck-list-errors)
+  ;; -------------------
+  ;; Another Customizing
+  (global-set-key (kbd "C-z C-z o") 'customize-frame-opacity)
+  (global-set-key (kbd "C-z C-z h") 'highlight-something)
+  (global-set-key (kbd "C-z C-z f") 'riser/make-large-ui)
+  
+  (global-set-key (kbd "<f5>") 'customize-dracula)
+  (global-set-key (kbd "<f6>") 'customize-chyla)
+  (global-set-key (kbd "<f7>") 'helm-M-x)
+  (global-set-key (kbd "C-o") 'other-window)
+  (global-set-key (kbd "C-i") 'other-window-back)
+  (global-set-key (kbd "TAB") 'indent-for-tab-command)
+
+  ;; ------
+  ;; Unused
+  ;; (global-set-key (kbd "<C-tab>") 'next-buffer)
+  ;; (global-set-key (kbd "<C-iso-lefttab>") 'previous-buffer)
+  ;; (global-set-key (kbd "M-p") 'other-window)
+  ;; (global-set-key (kbd "M-n") 'myprevious-window)
+  ;; (global-set-key (kbd "C-x S-o") 'myprevious-window)
+  ;; (global-set-key (kbd "C-c n") 'display-line-numbers-mode)
+  ;; (global-set-key (kbd "C-c w") 'writeroom-mode)
+  ;; (global-set-key (kbd "C-'") '(lambda () (interactive) (browse-url "www.google.com.pl")))
+  ;; (global-set-key (kbd "C-\"") '(lambda () (interactive) (eww "www.google.com.pl")))
+  ;; (global-set-key (kbd "C-x g") 'magit-status)
+  ;; (global-set-key (kbd "<f8>") 'neotree-toggle)
+  ;; (global-set-key (kbd "C-c t") 'neotree-toggle)
+#+end_src
+

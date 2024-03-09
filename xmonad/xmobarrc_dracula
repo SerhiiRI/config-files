@@ -12,7 +12,8 @@ Config {
   -- font =      "xft:Liberation Mono:size=10:antialias=true"
   -- font =      "xft:Droid Sans Mono:size=10:antialias=true"
   -- font =      "xft:Open Sans:bold:size=11:antialias=true"
-    font         = "xft:Consolas:bold:size=11:antialias=true"
+  --  font         = "xft:Consolas:bold:size=11:antialias=true"
+    font         = "Consolas Bold 11"
   , bgColor      = "#282a36"
   , fgColor      = "#f8f8f2"
   , position     = TopSize L 100 23

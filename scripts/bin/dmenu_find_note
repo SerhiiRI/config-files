@@ -1,0 +1,25 @@
+#!/bin/bash
+# dmenu_findfile.sh for dmenu.
+# Find every file in your $HOME
+# author: Diego Rucci (dragonauta) <dragonauta.x@gmail.com>
+# It shows dmenu with a width of 600px, 30 lines of text on top of screen.
+# Idea taken from Chrysostomus
+# https://github.com/Chrysostomus/bspwm-scripts/blob/master/bin/finder
+# Requires: dmenu, xdg-utils
+# 
+# You can customize:
+# Font
+# Background Commands
+NB='#3C403E'
+# Foreground Commands
+NF='#d7d7d7'
+# Background Prompt
+SB='#16A085'
+# Foreground Prompt
+SF='#FFF'
+#
+
+# fd -e org -e txt -e pdf -e djvu $@ | sed -e "s/'/\\\'/g" -e 's/\ /\\ /g' | sort -f | dmenu -i -p 'Open' -l 63 | xargs -r xdg-open
+
+fd -e org -e txt -e pdf -e djvu -E Documents/ | sed -e "s/'/\\\'/g" -e 's/\ /\\ /g' | sort -f | dmenu -i -sb '#228b22' -p 'Find' -l 40 | xargs -r xdg-open
+

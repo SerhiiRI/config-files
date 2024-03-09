@@ -117,7 +117,7 @@ colorYellow       = "#f1fa8c"
 colorWhite        = "#ffffff"
 colorBlack        = "#000000"
 color'bordr'norm  = colorBackground
-color'bordr'focs  = "#ca0066"
+color'bordr'focs  = colorComment -- "#ca0066"
 color'dmenu'nb    = colorBlack
 color'dmenu'nf    = "#f9f9f9"
 color'dmenu'sb    = colorViolet
@@ -155,6 +155,7 @@ dmenu'ShootUp            = "dmenu_shoot_app"
 dmenu'EditConfig         = "dmenu_edit_config"
 dmenu'MachineControl     = "dmenu_machine_control"
 dmenu'SoundControl       = "dmenu_sound_control"
+dmenu'FindNotes          = "dmenu_find_note"
 dmenu'NetworkManager     = "networkmanager_dmenu"
 dmenu                    = "dmenu_run -fn 'UbuntuMono:style=bold:size=12' -h 30 "
                            ++ "-nb '" ++ color'dmenu'nb ++ "' " -- normal background
@@ -181,7 +182,7 @@ main = do
     , layoutHook          = showWName' layout'currentWorkSpaceDialogTheme $ layout'layoutHook
     , manageHook          = hook'WindowManage
     , startupHook         = hook'StartUp
-    , borderWidth         = 0
+    , borderWidth         = 2
     , normalBorderColor   = color'bordr'norm
     , focusedBorderColor  = color'bordr'focs
     , logHook             = xmobar'LogHook xmproc0 >> fadeWindowsLogHook hook'WindowFade
@@ -194,7 +195,7 @@ main = do
 hook'StartUp :: X ()
 hook'StartUp = do
   spawnOnce "/usr/bin/emacs --daemon &"
-  spawnOnce "picom --config ~/.config/xdg/picom.conf &"
+  -- spawnOnce "picom --config ~/.config/xdg/picom.conf &"
   setWMName "LG3D"
 
 hook'WindowFade = composeAll
@@ -205,6 +206,8 @@ hook'WindowFade = composeAll
     , (className =? "firefox") <&&> (isUnfocused) --> opacity 0.97
     , (className =? "Totem") <&&> (isUnfocused) --> opacity 1.0
     , (className =? "Eog") <&&> (isUnfocused) --> opacity 1.0
+    , (className =? "mpv") <&&> (isUnfocused) --> opacity 1.0
+    
     , (title =? "Picture in picture") <&&> (isUnfocused) --> opacity 1.0
     , fmap ("Google" `S.isPrefixOf`) className --> opaque
     --, isFloating  --> opacity 0.75
@@ -224,6 +227,8 @@ hook'WindowManage = composeAll
   , className =? "Gthumb"               --> doFloat
   , className =? "gnome-calculator"     --> doFloat
   , className =? "Nm-connection-editor" --> doFloat
+  , className =? "Nemo"                 --> doCenterFloat
+  , className =? "File-roller"          --> doCenterFloat
   , title     =? "Jarman"               --> doFloat
   , title     =? "Picture in picture"   --> doFloat
   , title     =? "Incanter Plot"        --> doFloat
@@ -286,9 +291,9 @@ layout'layoutHook
   where
     myDefaultLayout
       = layout'mode'tile
-      ||| Mirror layout'mode'tile
+      -- ||| Mirror layout'mode'tile
       ||| noBorders layout'mode'tabs
-      ||| noBorders layout'mode'fullScreen
+      -- ||| noBorders layout'mode'fullScreen
 
 xmobar'LogHook :: Handle -> X ()
 xmobar'LogHook xmproc0 = dynamicLogWithPP $ xmobarPP
@@ -425,7 +430,7 @@ listPrograms =
     -- web
   , ("Firefox"        , "firefox", "The famous open source web browser")
   , ("Vivaldi"        , "vivaldi-stable", "Is best configurable web browser")
-  , ("Nyxt"           , "nyxt", "Web browser based on Common Lisp")
+  -- , ("Nyxt"           , "nyxt", "Web browser based on Common Lisp")
   , ("Chrome"         , "google-chrome-stable", "Google chrome browser")
     -- music
   , ("Spotify"        , "spotify", "Spotify music client")
@@ -437,34 +442,42 @@ listPrograms =
   , ("Nitrogen"       , "nitrogen", "Change Wallpapers")
   , ("QBittorrent"    , "qbittorrent", "Torrent client")
   , ("DataGrip"       , "/home/serhii/.prog-install/DataGrip/bin/datagrip.sh", "DataGrip")
-  , ("DBeaver"        , "dbeaver", "Database client")
+  , ("VisualVM"       , "visualvm", "VisualVM JVM profiler")
+  -- , ("DBeaver"        , "dbeaver", "Database client")
     -- messangers
   , ("Discord"        , "discord", "Discord client")
   , ("Mattermost"     , "mattermost-desktop", "Mattermonst Freshcode client")
   , ("Telegram"       , "telegram-desktop", "Telegram client")
     -- office
-  , ("PlanMaker"      , "freeoffice-planmaker", "Sheet processor")
-  , ("TextMaker"      , "freeoffice-textmaker", "Word processor")
-  , ("Presenstation"  , "freeoffice-presentations", "Presentation program")
+  -- , ("PlanMaker"      , "freeoffice-planmaker", "Sheet processor")
+  -- , ("TextMaker"      , "freeoffice-textmaker", "Word processor")
+  -- , ("Presenstation"  , "freeoffice-presentations", "Presentation program")
     -- Another
   , ("VPN Fcode"      , (terminal'gnome'output "VPN FreshCode" script'RunVPN), "Freshcode VPN")
   , ("HTop"           , (terminal'gnome "Resource Monitor" "htop"), "System resource monitoring")
   , ("Screen Recorder", "simplescreenrecorder", "Simple Program for record screeen")
+  , ("LossLessCut"    , "losslesscut", "Program to cutting the videos")
   , ("Flameshot"      , "flameshot gui", "Screenshot program")
-  , ("Gromit"         , "gromit-mpx", "Screendrawing tool F9 to activate")
+  -- , ("Gromit"         , "gromit-mpx", "Screendrawing tool F9 to activate")
   , ("ARandR"         , "arandr", "quick screen manager")
   , ("NetManager"     , "nm-connection-editor", "Network Manager GUI")
   , ("GDisks"         , "gnome-disks", "Disk and Partition manager")
   , ("Calculator"     , "gnome-calculator", "Disk and Partition manager")
-  -- , ("Sys Monitor"    , "gnome-system-monitor", "System monitor")
-  -- , ("Sys Logs"       , "gnome-system-log", "System Logs")
+  -- , ("Godot"          , "godot", "Godot engine")
+  , ("Default App"    , "selectdefaultapplication" , "mimeapps.list manager")
+  , ("Sys Monitor"    , "gnome-system-monitor", "System monitor")
+  , ("Sys Logs"       , "gnome-system-log", "System Logs")
+  , ("Color Picker"   , "gpick", "color picker tool")
+  , ("LXAppearance"   , "lxappearance", "Theme manager")
+  , ("RawTherapee"    , "rawtherapee","Raw Editor")
+  , ("JSON Viewer"    , "DadroitJSONViewer.AppImage", "")
+  , ("DpScreenOCR"    , "dpscreenocr", "")
   -- , ("Font Manager"   , "font-manager", "Font Manager")
   -- , ("Kleopatra"      , "kleopatra", "Key manager")
   -- , ("Evince"         , "evince", "PDF viewer")
   ]
 
 -- TODO:
--- [ ] add list from the direcotries
 listConfigs :: [(String, String, String)]
 listConfigs =
   [ ("Emacs"               , emacs'editor ++ "~/.emacsconfig.org", "Org emacs configuration file")
@@ -482,7 +495,6 @@ listConfigs =
   ]
 
 -- TODO:
--- [ ] rework to two level notes gridmap
 listNoteDir :: [(String, String, String)]
 listNoteDir =
   [ ("Home Ranger"   , "emacsclient -c -a emacs --eval '(ranger)'", "Client instance for emacs")
@@ -568,9 +580,9 @@ keybindingSettings =
   , ("M-S-f" , GS.bringSelected $ myGridConfig)
   ]
   ++ -- Programs
-  [ ("M-S-n" , spawn "nautilus -w")
-  , ("M-S-m" , spawnAndDo (doCenterFloat) "urxvt")
-  , ("M-S-f" , spawn emacs'ranger)
+  [ ("M-S-n" , spawn "nemo") -- ("M-S-n" , spawn "nautilus -w")
+  -- , ("M-S-m" , spawnAndDo (doCenterFloat) "urxvt")
+  , ("M-S-m" , spawn emacs'dired)
   , ("M-S-s" , spawn "flameshot gui")
   ]
   ++ -- Dmenu
@@ -581,6 +593,7 @@ keybindingSettings =
   , ("M-C-p" , spawn dmenu'ShootUp)
   , ("M-C-m" , spawn dmenu'MachineControl)
   , ("M-C-s" , spawn dmenu'SoundControl)
+  , ("M-C-i" , spawn dmenu'FindNotes)
   , ("M-C-n" , spawn dmenu'NetworkManager)
   ]
   ++ -- System controls
@@ -589,6 +602,8 @@ keybindingSettings =
   , ("<XF86AudioMute>"        , spawn "amixer set Master toggle")
   , ("<XF86MonBrightnessUp>"  , Bright.increase)
   , ("<XF86MonBrightnessDown>", Bright.decrease)
+  , ("M-S-."                  , spawn "ddcutil setvcp 10 - 25")
+  , ("M-S-/"                  , spawn "ddcutil setvcp 10 + 25")
   ]
   ++ -- Music control
   [ ("<XF86AudioNext>", spawn "/home/serhii/.xmonad/spotify_control next")

@@ -13,6 +13,7 @@ Configuration of this block contains only non-package configuration, or only pac
 	  ;; (setq split-height-threshold nil
 	  ;;       split-width-threshold 160)
    #+end_src
+
 ** Emacs bars
    Show or hide emacs UΙ component. 
    ~scroll-bar-mode~ - frame scroll bar
@@ -68,7 +69,7 @@ Configuration of this block contains only non-package configuration, or only pac
        (ac-config-default)
        (setq ac-sources (append ac-sources '(ac-source-yasnippet))))
    #+end_src
-   
+
 ** Text manipulation
    In this block you can locate functions which help me editing text or other things
 *** Text moving up/down
@@ -169,6 +170,11 @@ Configuration of this block contains only non-package configuration, or only pac
     (riser/set-my-custom-font
      :family "JetBrains Mono"))
 
+  (defun customize-font-Victor ()
+    (interactive)
+    (riser/set-my-custom-font
+     :family "Victor Mono"))
+
   (defun customize-font-Hack ()
     (interactive)
     (riser/set-my-custom-font
@@ -206,10 +212,17 @@ Configuration of this block contains only non-package configuration, or only pac
      (defun customize-dracula () (interactive) (toggle-theme 'dracula))
      (defun customize-chyla () (interactive) (toggle-theme 'chyla))
      (defun customize-freshcode-light () (interactive) (toggle-theme 'freshcode-light))
+     (defun customize-ritchie () (interactive) (toggle-theme 'ritchie))
 
      (defun customize-frame-opacity ()
        (interactive)
        (let* ((choices '(("50"  . 50)
+			 ("0"  . 0)
+			 ("10"  . 10)
+			 ("20"  . 20)
+			 ("30"  . 30)
+			 ("40"  . 40)
+			 ("60"  . 60)
 			 ("70"  . 70)
 			 ("100" . 100)
 			 ("90"  . 90)))
@@ -255,9 +268,24 @@ Configuration of this block contains only non-package configuration, or only pac
      (message "wrong argument %s" num)))
 #+end_src
 
+** NixOS
+#+begin_src emacs-lisp
+  (use-package helm-nixos-options
+    :ensure t)
+
+  (use-package nix-mode
+    :ensure t
+    :after (helm-nixos-options)
+    :bind (("C-c p" . helm-nixos-options)))
+
+#+end_src
+
 * Modeline 
   #+begin_src emacs-lisp
-    (mood-line-mode)
+    (use-package mood-line
+      :ensure t
+      :init
+      (mood-line-mode))
   #+end_src
 
 * Magit
@@ -384,8 +412,16 @@ Configuration of this block contains only non-package configuration, or only pac
 	      "~/fcode/projects/qbp1/backend2/serhii/snippets"))
       (yas-global-mode 1))
   #+end_src
+* Haskell
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :ensure t)
+#+end_src
 * Lisps languages
   #+begin_src emacs-lisp
+
+    (use-package highlight-parentheses
+      :ensure t)
 
     (defun lisp-mode-hook ()
       "enable some plugins after init mode"
@@ -563,6 +599,7 @@ Configuration of this block contains only non-package configuration, or only pac
 		  (python . t)
 		  (ditaa . t)
 		  (sql . t)
+		  (http .t)
 		  (plantuml . t)
 		  (gnuplot . t)))
 	       (setq org-agenda-files (list) ;; (list "~/Documents/agenda/main.org" 
@@ -599,16 +636,16 @@ Configuration of this block contains only non-package configuration, or only pac
 				  ;; (set-face-attribute 'org-block-end-line nil :foreground (face-background 'org-block-end-line nil 'default))
 				  )))
 
-     (use-package ox-moderncv
-       :load-path "/home/serhii/.emacs.d/org-cv/"
-       :init (progn
-	       (require 'ox-moderncv)
-	       (require 'ox-awesomecv)))
+     ;; (use-package ox-moderncv
+     ;;   :load-path "/home/serhii/.emacs.d/org-cv/"
+     ;;   :init (progn
+     ;; 	  (require 'ox-moderncv)
+     ;; 	  (require 'ox-awesomecv)))
 
-     (defun export-cv-awesomecv ()
-       (let ((file-name (buffer-file-name (current-buffer))))
-	 (org-export-to-file 'moderncv file-name)
-	 (org-latex-compile file-name)))
+     ;; (defun export-cv-awesomecv ()
+     ;;   (let ((file-name (buffer-file-name (current-buffer))))
+     ;;     (org-export-to-file 'moderncv file-name)
+     ;;     (org-latex-compile file-name)))
 
    #+end_src
 * Dashboard
@@ -700,18 +737,18 @@ Configuration of this block contains only non-package configuration, or only pac
   ;; (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))
 
-  (defun setup-tide-mode ()
-    (interactive)
-    (tide-setup)
-    (flycheck-mode +1)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode +1)
-    (tide-hl-identifier-mode +1)
-    (company-mode +1))
+  ;; (defun setup-tide-mode ()
+  ;;   (interactive)
+  ;;   (tide-setup)
+  ;;   (flycheck-mode +1)
+  ;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  ;;   (eldoc-mode +1)
+  ;;   (tide-hl-identifier-mode +1)
+  ;;   (company-mode +1))
 
   ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-  (use-package tide)
+  ;; (use-package tide)
 
   ;; (use-package tide
   ;;   :ensure t
@@ -720,15 +757,15 @@ Configuration of this block contains only non-package configuration, or only pac
   ;; 	 (typescript-mode . tide-hl-identifier-mode)
   ;; 	 (before-save . tide-format-before-save))
 
-  (use-package web-mode
-    :mode (("\\.jsx$" .  web-mode)
-	   ("\\.tsx$" .  web-mode))
-    :hook (web-mode . web-mode-log-hook)
-    :config
-    (defun web-mode-log-hook ()
-      (setq web-mode-enable-auto-indentation nil)
-      (when (string-equal "tsx" (file-name-extension buffer-file-name))
-	(setup-tide-mode))))
+  ;; (use-package web-mode
+  ;;   :mode (("\\.jsx$" .  web-mode)
+  ;; 	 ("\\.tsx$" .  web-mode))
+  ;;   :hook (web-mode . web-mode-log-hook)
+  ;;   :config
+  ;;   (defun web-mode-log-hook ()
+  ;;     (setq web-mode-enable-auto-indentation nil)
+  ;;     (when (string-equal "tsx" (file-name-extension buffer-file-name))
+  ;;       (setup-tide-mode))))
 
 #+end_src
 * Cider
@@ -742,12 +779,10 @@ Configuration of this block contains only non-package configuration, or only pac
      (use-package cider
        :bind (("C-M-S-i" . cider-inspect-last-result)
 	      ;; ("TAB" . company-indent-or-complete-common)
-	      )
+	      ("C-z C-c" . (lambda () (interactive) (cider-connect-clj '(:host "0.0.0.0" :port "39399")))))
        :init
        (setq cider-known-endpoints
-	     '(("platform-repl-back" "0.0.0.0" "3012")
-	       ("platform-repl-front" "0.0.0.0" "8333")
-	       ("platform-repl-shadow" "0.0.0.0" "8234")
+	     '(("platform-repl-back" "0.0.0.0" "39399")
 	       ("local-babashka" "0.0.0.0" "1667")))
        :hook (cider-mode . presonal-cider-mode-hook))
    #+end_src
@@ -897,6 +932,7 @@ Configuration of this block contains only non-package configuration, or only pac
   (global-set-key (kbd "C-z t d") 'customize-dracula)
   (global-set-key (kbd "C-z t c") 'customize-chyla)
   (global-set-key (kbd "C-z t f") 'customize-freshcode-light)
+  (global-set-key (kbd "C-z t r") 'customize-ritchie)
   ;; ------------
   ;; Select Fonts
   (global-set-key (kbd "C-z f s") 'customize-font-SourceCodePro)
@@ -905,6 +941,7 @@ Configuration of this block contains only non-package configuration, or only pac
   (global-set-key (kbd "C-z f h") 'customize-font-Hack)
   (global-set-key (kbd "C-z f c") 'customize-font-Monospace)
   (global-set-key (kbd "C-z f j") 'customize-font-JetBrains)
+  (global-set-key (kbd "C-z f j") 'customize-font-Victor)
   ;; -----------
   ;; ShortAccess
   (global-set-key (kbd "C-z u") (lambda () (interactive) (flycheck-mode)))
@@ -918,12 +955,14 @@ Configuration of this block contains only non-package configuration, or only pac
   (global-set-key (kbd "C-z C-z f") 'riser/make-large-ui)
   
   (global-set-key (kbd "<f5>") 'customize-dracula)
-  (global-set-key (kbd "<f6>") 'customize-chyla)
-  (global-set-key (kbd "<f7>") 'helm-M-x)
+  (global-set-key (kbd "<f6>") 'customize-ritchie)
+
   (global-set-key (kbd "C-o") 'other-window)
-  (global-set-key (kbd "C-i") 'other-window-back)
+  (global-set-key (kbd "C-M-o") 'other-window-back)
   (global-set-key (kbd "TAB") 'indent-for-tab-command)
 
+  (global-set-key (kbd "C-M-;") 'shrink-window-horizontally)
+  (global-set-key (kbd "C-M-'") 'enlarge-window-horizontally)
   ;; ------
   ;; Unused
   ;; (global-set-key (kbd "<C-tab>") 'next-buffer)

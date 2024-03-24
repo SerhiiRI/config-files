@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# Script name: dm-confedit
+# Description: Choose from a list of configuration files to edit.
+# Dependencies: dmenu, emacsclient
+# GitLab: https://www.gitlab.com/dwt1/dmscripts
+# License: https://www.gitlab.com/dwt1/dmscripts/LICENSE
+# Contributors: Derek Taylor
+#               Simon Ingelsson
+#               HostGrady
+
+declare -a options=(
+    "poweroff"
+    "reboot"
+    "sleep"
+    "quit"
+)
+
+# Piping the above array (cleaned) into dmenu.
+# We use "printf '%s\n'" to format the array one item to a line.
+choice=$(printf '%s\n' "${options[@]}" | rofi -dmenu -i -sb "#87428A" -l 4 -p 'Machine action')
+if [[ "$choice" == "quit" ]]; then echo "Quit. Program terminated." && exit 0; fi
+if [[ "$choice" == "poweroff" ]]; then echo "Shutdown system" && poweroff && exit 0; fi
+if [[ "$choice" == "reboot" ]]; then echo "Restarting system" && systemctl reboot && exit 0; fi
+if [[ "$choice" == "sleep" ]]; then echo "Sleep" && systemctl suspend && exit 0; fi
+echo "Do nothing" && exit 1
+
+
+
+

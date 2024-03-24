@@ -1,0 +1,189 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 25,
+    "margin-left": 5,
+    "margin-right": 5,
+    "margin-top": 0,
+    "spacing": 1,
+    "output" : ["eDP-1"],
+    // Choose the order of the modules
+
+    "modules-left": ["custom/jgmenu", "custom/separator", "hyprland/workspaces", "custom/separator",  "hyprland/window" ],
+    "modules-center": [],
+    "modules-right": ["network", "clock", "hyprland/language",  "cpu",  "memory", "backlight", "battery", "pulseaudio", "tray"],
+
+    // Modules configuration
+    "hyprland/workspaces": {
+        "on-click": "activate",
+        //"active-only": false,
+        "all-outputs": true,
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": [],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": [],
+            "10": [],
+         },
+        "format": "{icon}",
+        "format-icons": {
+	    "1": "d1",
+	    "2": "d2",
+	    "3": "web",
+	    "4": "4",
+	    "5": "media",
+	    "6": "messages",
+	    "7": "7",
+	    "8": "8",
+	    "9": "oA",
+	    "10": "oB"
+            // "1": "",
+            // "2": "",
+            // "3": "",
+            // "4": "",
+            // "5": "",
+            // "6": "",
+            // "7": "",
+            // "8": "",
+            // "9": "󰙯"
+            // "10": ""
+            // "urgent": "",
+            // "active": "",
+            // "default": ""
+         },
+    },
+    "hyprland/window": {
+        "format": "{class} | {title}",
+	"max-length": 50
+    },
+    "hyprland/language": {
+        "format": "{short}",
+	"on-click": "hyprctl switchxkblayout at-translated-set-2-keyboard next"
+    },
+    "custom/jgmenu":{
+	"format": "Menu",
+	"on-click": "jgmenu_run"
+    },
+    "custom/separator": {
+        "format": "|",
+    	"interval": "once",
+	"tooltip": false
+    },
+    "keyboard-state": {
+        "numlock": true,
+        "capslock": true,
+        "format": "{name} {icon}",
+        "format-icons": {
+            "locked": "",
+            "unlocked": ""
+        }
+    },
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "icon-size": 18,
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "ignore-list": [
+           "kitty",
+           "wezterm",
+           "foot",
+           "footclient"
+        ],
+    },
+    "tray": {
+        "icon-size": 18,
+        "spacing": 5,
+        "show-passive-items": true,
+    },
+    "clock": {
+        "interval": 60,
+        "format": "  {:%a %b %d  %I:%M %p}", // %b %d %Y  --Date formatting
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+   "temperature": {
+        // "thermal-zone": 2,
+        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        // "format-critical": "{temperatureC}°C {icon}",
+        "critical-threshold": 80,
+        "interval": 2,
+        "format": "{temperatureC}°C ",
+        "format-icons": ["", "", ""]
+    },
+    "cpu": {
+        "interval": 2,
+        "format": "{usage}% ",
+        "tooltip": false
+    },
+    "memory": {
+        "interval": 4,
+        "format": "{used} GB "
+    },
+   "disk": {
+        "interval": 15,
+        "format": "{percentage_used}% 󰋊",
+    },
+    "backlight": {
+        // "device": "acpi_video1",
+        "format": "{percent}% {icon}",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+	"on-scroll-up": "brightnessctl s +5%",
+        "on-scroll-down": "brightnessctl s 5%-"
+    },
+    "battery": {
+        "interval": 30,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format-charging": "󰂄 {capacity}%",
+        "format": "{icon} {capacity}%",
+        "format-icons": ["󱃍", "󰁺", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "tooltip": true
+    },
+    "battery#bat2": {
+        "bat": "BAT2"
+    },
+    "network": {
+    	"interval": 1,
+        "interface": "wlp2s0", // (Optional) To force the use of this interface
+        "format-wifi": "{bandwidthDownBytes} | {bandwidthUpBytes}", //({ipaddr}, {essid} {signalStrength}  %)
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "Disconnected ⚠",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{volume}% {icon}", //{format_source},
+        "format-bluetooth": "{volume}% {icon} 󰂯", //{format_source},
+        "format-bluetooth-muted": "󰖁 {icon} 󰂯", //{format_source},
+        "format-muted": "󰖁 {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "󰋋",
+            "hands-free": "󱡒",
+            "headset": "󰋎",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/power": {
+      "format": "{icon}",
+      "format-icons": "",// 󰣇
+      "exec-on-event": "true",
+      "on-click": "~/scripts/sessionMenu.sh",
+    }
+}

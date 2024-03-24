@@ -1,0 +1,17 @@
+anchor=bottom-right
+background-color=#2e3440
+border-size=2
+width=400
+height=110
+default-timeout=5000
+
+[urgency=low]
+border-color=#6272a4
+
+[urgency=normal]
+border-color=#bd93f9
+
+[urgency=high]
+border-color=#ff5555
+
+

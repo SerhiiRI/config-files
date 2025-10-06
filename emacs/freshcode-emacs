@@ -1,0 +1,1268 @@
+;;-*- fill-column:80; -*-
+
+;; ======================
+;; * Is Emacs the answer?
+;; ======================
+;;
+;;  Emacs was created based on the fundamental principle of freedom
+;; and made people appreciate the concept of software freedom.
+;;
+;;  People are free to choose what they want to buy, support financially or
+;; fund the inventions they like. This freedom enables the implementation 
+;; of ideas and solutions to enhance the human experience. People act as 
+;; they choose. Sounds good, right?
+;;
+;;  However, the right to build doesn't exempt us from the need to purchase
+;; materials. Freedom is an idea, but practically acting as we choose, buying
+;; what we want, and realizing promising ideas requires some
+;; investments. Building a dream car will be expensive, and doing it yourself
+;; rarely surpasses the quality offered by the market's established
+;; technology. Building your dream house on your own is a more realistic option,
+;; though it can still be costly.
+;;
+;; Many things in this world limit us, but those few that don't are really
+;; exceptional. They empower us to bring  to life all we imagine or desire
+;; and ultimately share it with like-minded individuals.
+;;
+;; One of them is GNU Emacs the extremely extensible editor.
+;;
+;; But first things first. I welcome you to this less-than-perfect tutorial to:
+;;
+;; - go back to the 90s
+;; - get to know more about how to organize routine tasks
+;; - throw your computer mouse out of the window
+;;
+;; What does this tutorial require from you? Just patience, desire to learn
+;; new things, salamander's tail, crystal ball, fairy dust, and tambourine.
+;;
+
+;; ========
+;; * Tips *
+;; ========
+;;
+;; ** Why Emacs shortcuts involve Ctrl?
+;;
+;;   Emacs is a rather old piece of Unix software. The keyboard used by Emacs
+;;  developers at MIT AI Lab in the late 1970s differed from the ANSI and  ISO layouts. 
+;;  The position of the Ctrl on the keyboard was another.
+;;   This is one of the main reasons why I often receive the same while sharing
+;;  this delightful practice with developers: “Why is it so painful?” But things
+;;  are never (almost never) as bad as they seem.
+;;
+;; ** How to remap CapsLock to Ctrl and enjoy Emacs?
+;;
+;;   Before we start learning the Emacs keyboard, let's remap CapsLock to Ctrl.
+;;  This key swapping prevents you from accidentaly breaking your finger(s) and
+;;  undermining your motivation.
+;;
+;;   1. If you are Windows user, use the "SharpKeys" free tool to remap your keyboard.
+;;   2. If you are GNU/Linux user:
+;;    2.2. If you are GNOME 3+ user, then run or install Gnome Tweeks. Find a keyboard
+;;       Settings, and remap the CapsLock button with the Left Ctrl.
+;;    2.2. If you have ANY other environment, put this command:
+;;          $ setxkbmap -option "ctrl:nocaps"
+;;         into one of your's startup scripts. For example ".bashrc"...
+;;
+;; ** How to set keyboard latency?
+;;
+;;   Another tip for smoother typing: open the terminal and change the
+;;  keyboard delay/repeat rate. Put the next command to the terminal:
+;;
+;;     $ xset r rate 200 130
+;;
+;;  where 200 — is a delay between the pressed key on the keyboard and the
+;;  symbol showing on the screen. 130 — the keyboard repeat rate. Both values should
+;;  be adapted to your hardware.
+;;
+;; ** How to get rid of nausea at the sight of default Emacs?
+;;
+;;   Put a Fiat Multipla, Nissan Juke, or any car made by USSR on your desktop wallpaper.
+;;  After that, when you see Emacs, you should feel better.
+;;
+
+;; ===================
+;; * Emacs Shortcuts *
+;; ===================
+;;
+;; !!!! Once you have remapped Ctrl, open Emacs, and let’s start with
+;; !!!! shortcuts and aliases.
+;;
+;;  M - Alt
+;;  C - Ctrl
+;;  S - Shift
+;;  <SPC> - Space
+;;  <Del> - Enter
+;;  s (small) - Super Linux key, never bind it (or “Windows” button on Windows OS),
+;;      because it is a system key and using it can lead to some issues.
+;;
+;;  Movement is probably the hardest part and it may be scary and daunting.
+;; Anyway, give your brain at least 15 minutes to deal with the text in the
+;; open buffer. The key is to become accustomed to using it regularly. With
+;; practice, it can become second nature and even an exciting activity for
+;; those who enjoy accidentally hitting their toe on the corner of the bed.
+;;
+;; I recommend familiarizing yourself with the Emacs Reference Card ->
+;;    https://www.gnu.org/software/emacs/refcards/pdf/refcard.pdf
+;;
+;; RefCard contains a list of all default shortcuts. Check it to find
+;; shortcuts to enhance your Emacs experience.
+;;
+;; The amazing Emacs community and powerful knowledge base can help you find
+;; many tips on how to deal with simple editing routines, and what is even more
+;; important, how to customize Emacs.
+;;
+;; Hint: You will be amazed at how many out-of-the-box things Emacs already has;
+;;       you just need to bind them to hotkeys.
+;;
+;; ---------------
+;; ** Movements **
+;; ---------------
+;;
+;;  C-f (right) M-f (word right)
+;;  C-b (left)  M-b (word back)
+;;  C-n (down)  C-p (up)
+;;  C-a (start line)
+;;  C-e (end line)
+;;  C-m (new line or Enter)
+;;  C-v (scroll down)
+;;  M-v (scroll up)
+;;  M-S-. (go to the end of the buffer)
+;;  M-S-, (go to start of the buffer)
+;;
+;; -------------------------------------------------
+;; ** Deleting / Coping and other editing hints **
+;; -------------------------------------------------
+;;
+;;  C-d (delete character in front)
+;;  M-d (delete word in front)
+;;  C-k (kill line to end)
+;;  C-S-minus (undo/redo)
+;;  C-<SPC> (start selection text)
+;;  C-g (escape, discard, or unselect something, the main exit function)
+;;  C-w (crop), M-w (copy), C-y (paste)
+;;
+;;   In most editors, when we want to remove a symbol, we typically start at the
+;;  end of the text we are going to delete and press the Backspace key or
+;;  Ctrl+Backspace. This also applies to Emacs, but as an alternative (which I
+;;  strongly recommend), you can delete text in the forward direction using C-k,
+;;  C-d or M-d. Keep in mind that in Emacs, deleting text is a crop operation,
+;;  which can be annoying: it saves the deleted text in the system clipboard,
+;;  clearing previously copied text from the buffer.
+;;
+;; ---------------
+;; ** Searching **
+;; ---------------
+;;
+;;  C-s (search in front)
+;;  C-r (search in backward)
+;;  C-S-s (search regexp in front)
+;;  C-S-r (search regexp in backward)
+;;  M-u (uppercase)
+;;  M-l (lowercase)
+;;  M-c (capitalize)
+;;  C-t (swap characters) M-t (swap words)
+;;  C-l (get the screen relative to the current cursor position)
+;; 
+;;  In Emacs, editing is closely linked to the search process. If you need to
+;;  edit the word "escape", which is four lines above your current cursor
+;;  position, you have two options:
+;; 
+;;  1. press 'C-p' to move up, and then 'C-b'
+;; 
+;;  2. the quickest method is to use 'C-r' (searching backward); hold 'Ctrl' and
+;;     press 'r' repeatedly until you find the "escape" word you want to edit.
+;;     Try this for faster navigation in Emacs.
+;;
+;; -----------------------
+;; ** Window management **
+;; -----------------------
+;;
+;;  A quick note about Emacs terminology:
+;;
+;;  `Buffer' - in Emacs contains the content that you edit/see/modify. It is
+;;  similar to what other systems refer to as a file, document, workspace, or
+;;  editor. When you open a file, Emacs buffer makes its clone and opens it for
+;;  modification. Every buffer may be wrapped with Major/Minor mode. You can also
+;;  open a system buffer (which doesn't display any File or Document) and use it, 
+;;  for example, or customizing or debugging.
+;;
+;;  For instance, ‘customize-theme’ opens a system buffer, or *Messages* buffer
+;;  that outputs Emacs commands. System buffer (in most cases) has asteriks ‘*’
+;;  around its name, like “*Custom Themes*”. It’s just a name without any
+;;  special effects on the user experience.
+
+;;  `Window' - is a buffer container that can be shrunk, closed, or
+;;  swapped. Windows can display parts of different buffers or different
+;;  parts of a single buffer.
+;;
+;;  `Frame' -  is a screen object provided by X-Org or by Windows (referred to as a
+;;  “window” in the Windows ecosystem). Emacs can split a frame into
+;;  multiple windows.
+;;
+;;  C-x 3 (split window horizontally)
+;;  C-x 2 (split window vertically)
+;;  C-x 0 (close split window)
+;;  C-x o (move to other window)
+;;  C-x 5 2 (create new frame)
+;;  C-x 5 0 (close selected frame)
+;;
+;; ---------------
+;; ** Font size **
+;; ---------------
+;;
+;;  C-x C-= (increase font size)
+;;  C-x C-- (decrease font size)
+;;
+;; -----------------
+;; ** System keys **
+;; -----------------
+;;
+;;  M-x (modebar action)
+;;  C-x C-f (find-and-open file or create it)
+;;  C-x C-s (save file)
+;;  C-x C-c (exit Emacs)
+;;  C-x k (kill buffer, like close file/tab in other editors)
+;;  C-x b (choose buffer you need)
+;;  C-x d (dired file manager)
+;;  C-x C-b (advanced buffer management, to Exit press 'q)
+;;  C-h b (list of ALL keybindings supported IN THE CURRENTLY SELECTED BUFFER)
+;;
+;;  Ok, that's all you need to know.
+;;  Now, let's configure your Emacs.
+;;
+;; ----------------------------------------
+;; ** Getting help without leaving Emacs **
+;; ----------------------------------------
+;; 
+;;  Emacs offers a wide range of help functions. To access them, press
+;;  ‘F1’ or ‘C-h’. Emacs will then wait for your next key/shortcut to open
+;;  a help-buffer, which will assist you with your issue. I recommend 
+;;  using ‘C-h C-h’ to open the buffer that will redirect you to the page you 
+;;  are searching for. Alternatively, you can use more specific help views:
+;;  
+;;  C-h b (opens a buffer with a list of all currently available keybindings for you)
+;;  C-h t (opens a tutorial that will help you navigate Emacs using keybindings
+;;  C-h r (large Emacs manual)
+;;  C-h f (describes function)
+;;  C-h v (describes variable)
+;; 
+;; ----------------------------
+;; ** Compiling inside Emacs **
+;; ----------------------------
+;; 
+;;  Scripts and the large internal mechanics (configuration, etc.) are
+;;  implemented with the Emacs Lisp Compiler. Modifying Emacs behavior by
+;;  editing its source code could be a challenging task. Fortunately, the
+;;  creators of Emacs built a compiler within the program, allowing users to
+;;  compile something directly within their files. This means that you can 
+;;  enhance Emacs behavior and change its appearance on-the-fly. But how?
+;;  
+;;  To add a function to the global namespace or perform calculations, open Emacs
+;;  Lisp buffer. Create a file with the ‘.el’ extension or use the existing
+;;  scratch buffer. Then, write your code and evaluate it using `C-x C-e'.
+;;
+;; 
+;;      (+ 10 (+ 10 10) )
+;;                       ^
+;;  .--------------------'
+;;  '- put your cursor here (after the bracket) and press C-x C-e
+;;     to evaluate s-expression, and the result you can see inside 
+;;     minibuffer =>  "30 (#o36, #x1e, ?\C-^)" . Try to evaluate the
+;;     internal sum expression. 
+;; 
+;;  C-x C-e (eval s-expression right before your cursor place)
+;;  C-M-x (eval whole s-expression to the top-level, not depend where IN
+;;         the brackets your cursor is)
+;;
+;;  If you want to compile the entire file, use `M-x eval-buffer'. 
+
+;; =======================
+;; * Emacs Configuration *
+;; =======================
+;;
+;;  First, create a ~/.emacs file in your home dir or open an existing one.
+;;
+;;  Place the following text at the top of the file. The 'package' is needed to load
+;;  packages from remote repositories and compile those already downloaded from
+;;  the ~/.emacs.d/elpa folder.
+
+(require 'package)
+(load "package")
+(package-initialize)
+
+;;  Next, set a list of repositories. Let’s organize all of them in a variable.
+;;  We will use it a few lines later to streamline config file management.
+
+(setq repository-list
+      '(("melpa" . "https://melpa.org/packages/")
+	("gnu" . "https://elpa.gnu.org/packages/")
+	("org" . "http://orgmode.org/elpa/")
+	;; ("melpa-stable" . "https://stable.melpa.org/packages/")
+	))
+
+;;  In the default configuration, Emacs doesn't save selected themes, resetting
+;; the user's choice with each startup. Therefore, set the `custom-safe-themes' on
+;; true. Make it the first step during program startup.
+;; Note! In ELisp, only `nil' is real false value. True value is `t' symbol.
+
+(setq custom-safe-themes t)
+
+;;  After setting this variable, the program will no longer ask you about the
+;; previously chosen theme. Variables related to Emacs built-in functionality
+;; can be placed either before `custom-set-variables' macros (using 'setq')
+;; body or inside it. Example:
+;;
+;;  (custom-set-variables
+;;   '(custom-safe-themes t))
+
+;;  The next .emacs lines should be: custom-set-variables,
+;; custom-set-faces. These are macros,where EMACS KEEPS & CONTROLS ALL
+;; SETTINGS. It offers a large number of setting-variables, such as previously
+;; mentioned ‘custom-safe-themes’ which allows you to tailor Emacs behavior
+;; to your preferences.
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work correctly.
+ '(package-archives repository-list))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; ---------------------------------------------
+;; ** Emacs UI, or Let’s set default behavior **
+;; ---------------------------------------------
+;;
+;;   Stay a true keyboard warrior and don't touch your mouse! Let’s get rid of
+;;  unnecessary UI components that require mouse interactions.
+
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(menu-bar-mode   -1)
+
+;;   Unlike most text editors, Emacs doesn't display line numbers
+;;  by default Emacs doesn’t bother with informing users about row
+;;  numbers. 
+;;  To display them, enable the corresponding mode.
+
+(global-display-line-numbers-mode 1)
+
+;;  Threshold settings force Emacs to open another buffer in a horizontally
+;;  split window. If you are using standard FullHD monitor (or smaller),
+;;  just keep standard Emacs behavior and delete the following the lines.
+
+(setq split-width-threshold 0)
+(setq split-height-threshold nil)
+
+;; Emacs makes backups the first time you create a file and also when you
+;; save it. Autosaving, backuping, seat belts make our life so boring and
+;; predictable. So let's disable them (and use C-x C-s for saving)
+
+(setq make-backup-files nil)
+
+;; Integrate Emacs clipboard with the system XOrg clipboard (only for Linux users)
+
+(delete-selection-mode t)
+(transient-mark-mode t)
+(setq x-select-enable-clipboard t)
+
+;; The C-z shortcut freezes the frame, allowing you to return to the shell where
+;; the program was invoked. But in practice, it can painfully disrupts the
+;; programming flow and developers’ mental health.
+
+;; We will unpin and reuse it for further customizations.
+
+(global-unset-key (kbd "C-z"))
+
+
+;;  Switching between split windows in Emacs can be frustrating 
+;; for beginners. We can resolve it by remapping this highly needed
+;; functionality to other keys.
+
+(defun other-window-back ()
+  (interactive)
+  (other-window -1))
+
+;; `C-x o' replacement
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "C-i") 'other-window-back)
+
+
+;; ==================
+;; * Emacs Packages *
+;; ==================
+;;
+;; What is an Emacs package? In short, it's Emacs Lisp code that integrates or
+;; overrides specific Emacs behaviors or provides public functions for further
+;; usage. Press the M-x command to find it in the global namespace.
+;;
+;; -------------------------------
+;; ** How to install something? **
+;; -------------------------------
+;;
+;;   Before we start, let’s review an installation case for a specific package,
+;;   'dashboard extension which replaces our "Welcome buffer" with a new, more
+;;   organized view. An indispensable thing, believe me :)
+;;
+;;   0. press 'M-x' and...
+;;   1. Type `package-refresh-contents' to refresh the list of packages
+;;      from the remote repositories we specified earlier (melpa,elpa,melpa-stable)
+;;   2. Once the list of available packages is updated, press 'M-x' and type
+;;      'package-install' - your action-bar will be in waiting mode until you enter
+;;      the name of the package you want to install.
+;;      So, type ‘dashboard’, press '<DEL>' (Enter) and wait a few seconds until the
+;;      package retrieves all the parts and compiles (loads) them.
+;;
+;;      Note! To delete a package use `package-delete'
+;;
+;;   3. ...but what comes next? We must USE this package directly.
+;;      Use ‘require’ statement that loads downloaded code in Emacs for its
+;;      further use:
+;;      (You can use 'loading' term for describing compiling in Emacs)
+;;
+;;         (require 'dashboard)
+;;
+;;      This line compiles the package after Emacs reads the ~/.emacs file.
+;;
+;;      Next, we can add another specific settings, required or optional (depends on
+;;      the package we use). For example, if you don't need Agenda view,
+;;      the 'dashboard package can pull out customizable "setting variables". (`setq'
+;;      - set variable value, `nil'/`t' is False/True equivalent in ELisp)
+;;
+;;         (setq dashboard-week-agenda nil)
+;;
+;;      Finally, to activate dashboard, invoke it
+;;
+;;         (dashboard-setup-startup-hook)
+;;
+;;   4. All you need is three lines, but only limited by them we will accumulate
+;;      dozens of packages with configs and quickly become clutter our ~/.emacs.
+;;      Actually, the package `use-package' was created to help us organize
+;;      configurations. Let’s gather `dashboard' configs together.
+;;
+;;         (use-package dashboard
+;;            :ensure t
+;;            :init (setq dashboard-week-agenda nil)
+;;            :config (dashboard-setup-startup-hook))
+;;
+;;      This approach keeps config in one large expression, but adds some extra
+;;      features, for example `:ensure t` automatically installs package if it can
+;;      not be found in local storage (~/emacs.d/elpa)
+;;      For making this organizational trick we must install a use-package using
+;;      `package-refresh-contents' and `package-install' or evaluating the code I
+;;      prepared below.
+;;
+;;  So let then install 'use-package:
+
+(unless (package-installed-p 'use-package)
+  (progn
+    (package-refresh-contents)
+    (package-install 'use-package)))
+
+;;
+;; -----------------------------------
+;; ** Few words about 'use-package' **
+;; -----------------------------------
+;;
+;;  As mentioned, it helps us organize configurations, reduce Emacs
+;;  startup time, and control the loading process.
+;;
+;;    (use-package <package-name-symb>)
+;;
+;;  The previous declaration compiles code from local repositories and puts
+;;  <package-related> functions in the common Emacs Lisp namespace, equivalent 
+;;  to the `require' Emacs function (require <package-name-symb>)
+;;
+;;  Use-package provides even more control with the following Keywords:
+;;  `:ensure' - if the package is not installed, it will be downloaded 
+;;     and installed into the local repository.
+;;  `:init' - the next code segment will be evaluated before the corresponding
+;;     package is compiled
+;;  `:config' - the next code will be evaluated after the package is loaded
+;;  `:defer' |`:demand' (t|nil) - both rely on 'autoload' Emacs feature. Some
+;;    installed packages can be quite complex, consisting of dozens of heavy files. For
+;;     example, Major mode can contain hundreds of functions that are not required
+;;     to be compiled and loaded immediately. You don’t need a full list of
+;;     java-mode interactive functions if you plan to work with Clojure
+;;     files. Package authors mostly use the autoload feature for the mode-toggle
+;;     function to make it visible (when loading Emacs package, only functions
+;;     marked as 'autoload' are added to the common namespace and can be invoked
+;;     using M-x; the other functions are not loaded until you manually invoke
+;;     java-mode, just as an example). :defer and :demand keys gіve us control over
+;;     this process:
+;;       `:defer' - defers the evaluation of the entire library until you use it
+;;             directly. In most cases, you don’t need to use it manually.
+;;       `:demand' - opposite to the :defer, it compiles the entire package with all
+;;             functions and makes them available in the public namespace. It's useful
+;;             for packages you need to be ready during the startup Emacs process.
+;;  `:bind' - a pleasant way to declare keybinding
+;;  `:after' - provides control over the sequence of package loading
+;;  `:hook' - a simplified hook declaration, replacing of the traditional
+;;     approach with add-hook macros.
+;;
+;;
+;; -------------------------
+;; ** About Modes & Hooks **
+;; -------------------------
+;;
+;;  A mode is a code that changes the default behavior. In Emacs we have only
+;;  two modes:
+;;
+;;    `Major' - in fact is a "parser" for a specific language with a specific
+;;    semantics. Major mode code describes how we work within the
+;;    buffer. For example, the `clojure-mode' package is a Major mode.
+;;
+;;    `Minor' complements the Major mode and offers additional functionality
+;;    beyond the currently edited mode. For example, `yafolding' brings
+;;    code folding functionality to Emacs.
+;;
+;;  `Hook'. The problem with a Minor mode is that it requires manual activation
+;;  from the command-menu (M-x) for the specific buffer you’re using. It can’t
+;;  be automatically activated for all buffers. Hence, we need to choose where
+;;  and when to enable it on a case-by-case basis for the particular buffer or
+;;  Major mode.
+;;   For example, it comes in handy when you are editing a large file with 400
+;;  lines of Clojure code, which can be quite challenging to analyze. Here we
+;;  can use 'M-x yafolding-mode' and our current Keymap will be enhanced with
+;;  additional bindings (<DEL> is Enter). Once the Major mode is enabled, hooks
+;;  are executed. For example, when you open a Clojure file, Emacs automatically
+;;  runs the `clojure-mode` and then triggers a `clojure-mode-hook` containing a
+;;  list of user-defined hooks.
+;;
+;;   `C-<DEL>' - yafolding-toggle-element shortens large code inside brackets (...)
+;;
+;;   `C-S-<DEL>' yafolding-toggle-all performs almost the same as a previous one
+;;   but applies to an entire top level function or expression
+;;
+;;   Anyway, if your editing habits include this experience, you might find
+;;  it annoying to enable this mode every time.
+;;   Emacs resolves this frustration by adding a `Hook' function available in the
+;;  Major mode, which is automatically invoked every time you open the
+;;  buffer. Here is an example:
+;;
+;;      (defun my-clojure-hooks ()
+;;        (yafolding-mode +1))
+;;
+;;      (add-hook 'clojure-mode-hook 'my-clojure-hooks)
+;;
+;;  Once you've opened the Clojure buffer, enable yafolding-mode. You can
+;;  also do it using an inline lambda without defining a dedicated function:
+;;
+;;       (add-hook 'clojure-mode-hook (lambda ()
+;;                                      (yafloding-mode +1)))
+;;
+;;   Note! Each Minor mode has a different approach for self-enabling or
+;;  disabling (by using 't as True, or number greater than 0). To learn how
+;;  to do it correctly, use `C-h f' (M-x describe-function) shortcut and 
+;;  enter the function name you are searching for.
+;;   Supplied arguments MUST be described.
+;;   The enabled Minor/Major is indicated on the Modebar.
+;;   Read more: https://www.gnu.org/software/emacs/manual/html_node/elisp/Modes.html
+;;
+;;
+;; ------------------------------------
+;; ** Install and configure packages **
+;; ------------------------------------
+;;
+;;   Now, that’s enough text. Let's finally add packages to our EMACS!
+;;
+;; *** Dashboard
+;;    An extendable Emacs buffer that displays useful information during the Emacs
+;;   startup. It lists "last used files", opened projects, bookmarks and more.
+;;   Read more: https://github.com/emacs-dashboard/emacs-dashboard
+
+(use-package dashboard
+  :demand t ;; compile the entire library!
+  :ensure t ;; download if not already installed
+  :init
+  (setq dashboard-week-agenda nil)
+  (setq dashboard-set-heading-icons nil)
+  (setq dashboard-set-file-icons nil)
+  (setq dashboard-page-separator "\n\n")
+  (setq dashboard-set-init-info nil)
+  (setq dashboard-center-content t)
+  (setq dashboard-show-shortcuts t)
+  (setq dashboard-set-footer nil)
+  (setq dashboard-set-navigator t)
+  (setq dashboard-items '((recents  . 15)
+			  (projects . 20)
+			  (bookmarks . 5)
+			  (agenda . 100)))
+  :config
+  (dashboard-setup-startup-hook))
+
+
+;; *** Helm
+;;    Helm is Emacs incremental completion and selection narrowing
+;;   framework (sound like a dissertation topic, right). Comes in 
+;;   handy when you finally decide to replace the built-in M-x Emacs
+;;   action, which can be hard because of non-intuitive standards.
+;;    Helm contains dozens of extensions that add extra functionality to
+;;   Emacs.
+;;    Read more: https://github.com/emacs-helm/helm
+
+(use-package helm
+  :ensure t
+  :demand t
+  :bind (("M-x" . helm-M-x)
+	 ("C-x C-f" . helm-find-files)
+	 ("C-." . helm-imenu-in-all-buffers)
+	 ("C-x b" . helm-buffers-list)
+	 ("C-x r b" . helm-filtered-bookmarks))
+  :config
+  (helm-mode 1))
+
+
+;; *** Projectile
+;;   Emacs doesn't keep track of opened folders, and it’s too much even for me.
+;;   You have two methods to save a Folder as a project directory:
+;;
+;;    1. Use M-x `projectile-add-known-project' (select the project directory)
+;;    2. Add an empty file `.projectile'  to the directory
+;;       cd .... & touch `.projectile'
+;;
+;;   The dashboard extension should display the available projects you’ve added.
+;;   Bind Projectile to a shortcut, like 'C-c p'. The following shortcuts
+;;   will come in handy:
+;;
+;;     C-c p f - find file in the project directory
+;;     C-c p s s - text searching with SilverSearch
+;;     C-c p s g - text searching with gnu/Grep
+;;     C-c p r - replace some text in the project
+;;
+;;   Read more https://github.com/bbatsov/projectile
+
+(use-package projectile
+  :ensure t
+  :init (projectile-mode +1)
+  :bind (:map projectile-mode-map
+	      ("C-c p" . projectile-command-map)))
+
+
+;; *** Helm-projectile
+;;   The Helm wrapper, together with Projectile, enhances Projectile's UI and
+;;   makes code search more user-friendly by grep, ag,...
+
+(use-package helm-projectile
+  :ensure t
+  :after (helm projectile)
+  :init (helm-projectile-on))
+
+;; *** helm-ag + ag
+;;    For searching within a project or system, I recommend using "SilverSearch",
+;;   a faster al ternative to grep. It requires the `projectile' package to start.
+;;   Read more:
+;;    https://github.com/ggreer/the_silver_searcher
+;;    https://github.com/emacsorphanage/helm-ag
+;;
+
+(use-package ag
+  :ensure t)
+
+;; *** Multiple-Cursors
+;;   Multiple cursors for Emacs, a beautiful and simple tool for multiline editing.
+;;   Read more: https://github.com/magnars/multiple-cursors.el
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C->" . mc/mark-next-like-this)
+	 ("C-<" . mc/mark-previous-like-this)
+	 ("C-c C-<" . mc/mark-all-like-this)
+	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+
+
+;; *** Visual-Regexp
+;;
+;;    Visual Regular Expression editing is one of my favorite tool (I like it
+;;   even more than ‘multiple-cursor’)
+;;    This package doesn't use ANSI regexp, not so easy :) Emacs regexp is
+;;   a bit more complex, but it offers greater flexibility and speed for 
+;;   replacing or modifying content.
+;;   Press 'C-Spc' and mark the segment you're working with, then press 'C-c r'.
+;;   You'll see the modeline ready for your pattern. Write the text you
+;;   want to replace, press 'Enter', then enter the replacement text.
+;;    Example of Regexp Editing:
+;;
+;;       (list "Steven12" "Bruse30")
+;;
+;;    To mark the entire list, use 'C-Spc' from the open bracket to the end of the line, and
+;;   press 'C-c r'.  In the opened minibuffer write the following Emacs Regexp Pattern:
+;;
+;;      "\([[:alpha:]]+\)\([[:digit:]]+\)"
+;;
+;;    Press 'Enter, and write replacement pattern "\1('\2')"
+;;   Finally apply the changes, and you will see
+;;
+;;       (list "Steven('12')" "Bruse('30')")
+;;
+;;    If you made a mistake, press 'C-S-<minus>' to undo the changes and reopen
+;;   C-c r. Use 'M-(n/p)' keys to to navigate through the user history,
+;;   accessible within the minibuffer.
+;;
+;;   Read more:
+;;    https://www.emacswiki.org/emacs/RegularExpression
+;;    https://github.com/benma/visual-regexp.el
+
+(use-package visual-regexp
+  :ensure t
+  :bind (("C-c r" . vr/replace)
+	 ("C-c q" . vr/query-replace)))
+
+
+;; *** Auto-Complete
+;;    A simple context helper popup. Plug and Play; no extra
+;;   configuration is needed.
+;;   Read more: https://github.com/auto-complete/auto-complete
+
+(use-package auto-complete
+  :ensure t
+  :init (ac-config-default))
+
+;; *** Magit
+;;    One of the most powerful tools in the Emacs universe, Magit is a highly
+;;   flexible version of GUI control.
+;;
+;;     `C-x g' - when you are inside a git repository, press it to open magit
+;;     buffer and '?' to display available actions you are free to use in your
+;;     repository.
+;;
+;;     `C-c M-g` - magit-dispatch-file
+;;
+;;   Read more: https://magit.vc
+
+(use-package magit
+  :ensure t
+  :defer 3
+  :bind (("C-x g" . magit-status)))
+
+
+;; *** Treemacs
+;;   Files and projects explorer.
+;;     n/p - navigation keys
+;;     C-m(Enter) - to open/close
+;;     Tab - pressing it in a directory works as Enter (expand or hide
+;;           content). For the file-type node it shows a list of all
+;;           variables/functions; for markdown file it displays
+;;           a list of headers, etc.
+;;     C-c C-p a - pin project to Treemacs
+;;     C-c C-p d - delete project from Treemacs
+;;     C-c C-p r - rename project
+;;     C-? - file editing help
+;;     ? - Treemacs management help
+;;
+;;   Read more:   https://github.com/Alexander-Miller/treemacs
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (setq treemacs-width 50)
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode 'always))
+  :bind
+  (:map global-map
+	("<f9>"   . treemacs)
+	("<f10>"   . treemacs-bookmark)))
+
+
+;; *** Recentf
+;;   Keeps a list of recently accessed files in a special file located in the
+;;   .emacs.d/ directory.
+;;   Read more: https://wikemacs.org/wiki/Recentf
+
+(use-package recentf
+  :bind (("C-c C-b" . recentf-open-files)
+	 ("C-c C-r" . ido-recentf-open))
+  :config (setq recentf-max-menu-items 30
+		recentf-max-saved-items 50)
+  (recentf-mode 1))
+
+
+;; *** Reverse-Im
+;;    For example, if you're using Ukrainian keyboard, С-M-ї may result in an unknown
+;;   command message in the minibuffer. In such cases, you can use the `Reverse-Im'
+;;   package to remap Ukrainian `ї' key to `]'
+;;   Read more: https://github.com/emacsmirror/reverse-im
+
+(use-package reverse-im
+  :ensure t
+  :custom (reverse-im-input-methods '("ukrainian-computer"))
+  :config (reverse-im-mode t))
+
+;; *** Which-Key
+;;    Even the basic Emacs keymap is hard to keep in mind. Press 'C-c' and
+;;   wait a moment — Emacs will display a buffer with all keys and shortcuts.
+;;   Note! Enable Which-Key mode after ‘Helm’ is loaded.
+;;   Read more: https://github.com/justbur/emacs-which-key
+
+(use-package which-key
+  :ensure t
+  :after (helm)
+  :config (which-key-mode))
+
+;; *** Sudo-Edit
+;;    This package allows you to edit files as a ‘root’ user. For example, quick
+;;   modification /etc/resolv.conf
+;;   Read more: https://melpa.org/#/sudo-edit
+
+(use-package sudo-edit
+  :ensure t
+  :bind (("C-x x f" . sudo-edit-find-file)
+	 ("C-x x e" . sudo-edit)))
+
+;; *** Lisp mode hook
+;;    Now, let's configure Emacs for a Lisp programming environment. First, you
+;;   need to learn some keybindings to work with parentheses and quotes (in Emacs,
+;;   it’s called "s-expression"): '', (), [], <>, "".
+;;
+;;     C-M-f - move from bracket to bracket forward
+;;     C-M-b - move from bracket to bracket backward
+;;     C-M-S-f - select from bracket to bracket forward
+;;     C-M-S-b - select from bracket to bracket backward
+;;
+;; **** Paredit
+;;    Meet Paredit, a framework that simplifies working with parentheses.
+;;    Here's a list of all available shortcuts:
+;;       https://github.com/joelittlejohn/paredit-cheatsheet
+;;    but for MOST cases, the following next three keybinds should be enough:
+;;
+;;     C-S-) - slurp a s-expression or another element inside the current sexp
+;;               to the right (a|) (b) -> (a (b)) <|>
+;;     C-S-( - the same action, but in the left direction  (a) (|b) -> ((a) b) <|>
+;;     M-s - splice s-expression (package has dozen of keybindings, but I do not use all of them)
+;;
+;;    Read more:
+;;      https://paredit.org
+;;      https://github.com/joelittlejohn/paredit-cheatsheet - beautiful cheatsheet.
+
+(use-package paredit
+  :ensure t)
+
+;; **** flycheck-clj-kondo
+;;     An embedded Emacs tool that integrates with the language linters
+;;    you prefer. This explains how flycheck should work with the `clj-kondo`
+;;    CLI tool (make sure it is installed on your system)
+;;    Read more:  https://github.com/clj-kondo/clj-kondo
+
+(use-package flycheck-clj-kondo
+  :ensure t)
+
+;; **** Rainbow-delimiters
+;;     Highlight brackets according to their deps and the color themes
+;;    you choose. This mode makes code easier to analyze.
+
+(use-package rainbow-delimiters
+  :ensure t)
+
+;; **** Lisp modes
+;;     Ok, let's configure the Lisp mode hook. This simple function
+;;    enables additional minor modes every time the
+;;    mode-hook mentioned in 'defun' name is triggered.
+
+(defun lisp-mode-hook ()
+  "enable some plugins after init mode"
+  (paredit-mode)
+  (prettify-symbols-mode)
+  (rainbow-delimiters-mode))
+
+
+;; *** elisp-mode
+;;    A built-in Emacs mode for working with Elisp code. This mode is also covered by
+;;   the lisp-mode-hook.
+
+(use-package elisp-mode
+  :defer t
+  :config (add-hook 'emacs-lisp-mode-hook 'lisp-mode-hook))
+
+
+;; *** prettify-symbols-mode
+;;    This wonderful mode enables us to replace the standard text representation
+;;   of identifiers/symbols with aesthetically pleasing ones (several ascii
+;;   characters can be replaced with a single unicode character).
+;;    It helps keep the code more understandable and pretty. For example, when
+;;   you write "lambda", it gets replaced with the 'λ' symbol, which saves space
+;;   and looks attractive :)
+;;    Not a bad idea! As well as replacing some functions with math symbols.
+
+(defun clojure-lisp-pretty-symbols ()
+  "Display a word or string as pretty Unicode symbols"
+  (setq prettify-symbols-alist
+	'(;; ("lambda" . ?λ)
+	  ("fn" . ?λ)
+	  ;; Ƒ Ɣ ƒ Ƭ Ʃ Ƴ ƴ ɀ ℎ ℰ ℱ Ⅎ ℳ ℓ ⊂ ⊃ ⋂ ⋃ ∩ ∪ ∈ ∊ ∋ ∍ ∘ ⇩ ⇘ ⯆ ⯅ 🭶 ⯇ ⯈
+	  ;; Greek alphabet
+	  ;; Α α, Β β, Γ γ, Δ δ, Ε ε, Ζ ζ, Η η, Θ θ, Ι ι, Κ κ, Λ λ, Μ μ, Ν ν,
+	  ;; Ξ ξ, Ο ο, Π π, Ρ ρ, Σ σ/ς, Τ τ, Υ υ, Φ φ, Χ χ, Ψ ψ, Ω ω
+	  ;; ("->" . ?→)
+	  ;; ("->>" . ?↠)
+	  ;; ("=>" . ?⇒)
+	  ("defmulti" . ?Ƒ)
+	  ("defmethod" . ?ƒ)
+	  ("/=" . ?≠)   ("!=" . ?≠)
+	  ("==" . ?≡)   ("not" . ?!)
+	  ("<=" . ?≤)   (">=" . ?≥)
+	  ("comp" . ?υ) ("partial" . ?ρ))))
+
+;;   Using lisp-mode-hooks within clojure-mode-hook is a good idea because
+;;   Clojure inherits the full usability of Emacs Lisp.
+
+(defun clojure-mode-hook ()
+  (clojure-lisp-pretty-symbols)
+  ;; --- <optional>
+  ;;  These couple of lines are optional if you
+  ;; want to use linter in EVERY Clojure buffer.
+  ;;  You also can set (flycheck-mode nil) and
+  ;; enable it only in buffer you need following
+  ;; the next steps:
+  ;;   M-x flycheck-mode
+  (add-to-list 'flycheck-checkers 'clj-kondo-clj)
+  (flycheck-mode t)
+  ;; --- </optional>
+  (lisp-mode-hook))
+
+;; *** Clojure-Mode
+;;    The most popular package for parsing and working with Clojure
+;;   structures. It contains dozens of helper functions:
+;;   clojure-sort-ns, clojure-thread, etc.
+;;    Read more: https://github.com/clojure-emacs/clojure-mode
+
+(use-package clojure-mode
+  :ensure t
+  :defer t
+  :config (add-hook 'clojure-mode-hook 'clojure-mode-hook))
+
+;; *** Cider
+;;    Ok, now we are getting to the stellar package with the sparkling name :)
+;;   Cider greatly enhances the Clojure experience. It can work with different
+;;   backends, as well as babashka. You can run Cider with or without project
+;;   setup.
+;;
+;;    Shortcuts:
+;;      term "at point" refers to the cursor position under a symbol 
+;;      you want to find doc or definition for.
+;;
+;;      C-c C-e         - eval last expression
+;;      C-c C-v C-r     - eval region (mean the selection region)
+;;      C-M-x           - eval defun
+;;      C-c C-k         - eval current buffer
+;;      C-c C-b         - interrupt evaluation
+;;
+;;      C-c C-m         - macroexpand-1
+;;      C-c M-m         - macroexpand-all
+;;      C-M-S-i         - inspect the evaluated result
+;;
+;;      C-c C-v C-f C-e - eval pretty into the buffer
+;;      C-c M-;         - eval and put into comment below
+;;      C-c C-v C-w     - eval and replace invoked expression
+;;
+;;      C-c C-d d    - show doc at the cursor point
+;;      C-c C-d C-d  - show doc at the cursor point
+;;      C-c C-d j    - show javadoc at point
+;;      C-c C-d C-j  - show javadoc at point
+;;
+;;      C-c C-d c    - search for a symbol in ClojureDocs at point
+;;      C-c C-d C-c  - looking for symbol in ClojureDocs at point
+;;
+;;      C-c C-d w    - show on clojuredocs.org
+;;      C-c C-d C-w  - show on clojuredocs.org
+;;      C-c C-? r    - find function usages in dedicated buffer
+;;      C-c C-? C-r  - find function usages in the minibuffer
+;;
+;;      C-. - quick navigation through all functions in opened buffers
+;;      M-. - find definition of symbol at point
+;;      M-, - back after M-.
+
+(use-package cider
+  :ensure t
+  :bind (("C-M-S-i" . cider-inspect-last-result))
+  :init
+  ;; if you want to connect to some
+  ;; already known front/back repl
+  ;; you can add it to known-endpoints
+  ;; (<alias> <host> <nrepl-port>)
+  (setq cider-known-endpoints
+	'(("my-nrepl-back" "0.0.0.0" "3012")
+	  ("my-nrepl-front" "0.0.0.0" "8333")
+	  ("my-local-babashka" "0.0.0.0" "1667")))
+  :config
+  (defun personal-cider-mode-hook ()
+    ;; manually disable auto-complete popup
+    (auto-complete-mode -1)
+    ;; and replace it by the company popup
+    (company-mode 1))
+  :hook (cider-mode . personal-cider-mode-hook))
+
+;; -----------------------
+;; ** Optional Packages **
+;; -----------------------
+;;   These packages allow you to skip the configuration as they represent tools
+;;  or minor modes needed mostly for the current buffer you're
+;;  working on.
+;;   One of the key benefits of Emacs packages is their optionality. Not all of
+;;  them are mandatory, not all require configuration, and not all are auto-loaded
+;;  when Emacs starts up.
+;;   Emacs supports a limited number of programming languages by default. While it
+;;  can display .txt, .el, .py, Makefile files, it's not so good, for example, with
+;;  Dockerfile syntax, YAML, or Typescript source files.
+;;   To address this, you can manually install support for these languages using
+;;  `package-install' or (use-package yaml-mode :ensure t). 
+;;  The `:ensure' keyword downloads the package if it doesn't already exist in your
+;;  local storage.
+;;   Find more here https://github.com/emacs-tw/awesome-emacs
+;;  Note! Thousands of user scripts hosted in (m)elpa repositories and GitHub
+;;    enable you to do even more interesting things.
+;;
+;;
+;; *** Docker
+;;   A UI for managing Docker.
+;;   Read more: https://github.com/Silex/docker.el
+
+(use-package docker
+  :ensure t)
+
+;; *** Dockerfile-Mode
+;;   A Dockerfile Major mode.
+;;   Read more: https://github.com/spotify/dockerfile-mode
+
+(use-package dockerfile-mode
+  :ensure t)
+
+;; *** Daemons
+;;   A `system.d' UI for Linux users. For example, it will come in handy when you
+;;   need to restart the mysql daemon without leaving Emacs.
+;;   Read more: https://github.com/cbowdon/daemons.el
+
+(use-package daemons
+  :ensure t)
+
+;; *** Markdown-Mode
+;;   A feature-rich mode for editing .md files.
+;;   Read more: https://jblevins.org/projects/markdown-mode/
+
+(use-package markdown-mode
+  :ensure t)
+
+;; *** Rainbow-mode
+;;   This mode colorizes color names in buffers. After enabling it in any buffer,
+;;  you can easily find hex color codes (like #8432ff) and see the associated colors.
+;;   You can enable this mode like many other M-x rainbow modes. It will immediately
+;;  paint your buffer. You can also set up a hook for a specific Major mode.
+;;   However, there is another way to use colorization in Emacs. You can enable some
+;;  modes using file variables pinned at the top of the file IN A COMMENT BLOCK like this:
+;;
+;;        ;;-*- mode: clojure; mode: rainbow; mode: yafolding -*-
+;;
+;;   After opening the file, the buffer will enable all three mentioned modes.
+;;   Read more:
+;;    https://github.com/emacsmirror/rainbow-mode
+;;    https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html
+
+(use-package rainbow-mode
+  :ensure t)
+
+;; *** Olivetti
+;;   A configurable minor mode that automatically centers the content and
+;;   balances window margins with adjustable workspace width.
+;;
+;;   It's particulary useful for writers, as it solves the problem of “floating” text.
+;;   Read more: https://github.com/rnkn/olivetti
+
+(use-package olivetti
+  :ensure t)
+
+;; *** Yafolding
+;;   Enables code-folding.
+;;   After enabling it, go into some brackets and press C-Enter. You will see
+;;   '(...)' rolled code block.
+;;   Read more: https://github.com/emacsorphanage/yafolding
+
+(use-package yafolding
+  :ensure t)
+
+;; *** TLDR
+;;   Emacs UI for great Linux Python utils.
+;;   Read more: https://github.com/kuanyui/tldr.el
+
+(use-package tldr
+  :ensure t)
+
+;; -----------------------
+;; ** Emacs Customizing **
+;; -----------------------
+;;   It's a matter of personal taste, but I'll share my favorite themes here.
+;;  I don't recommend installing them with use-package as it will consume space
+;;  in your configuration without being necessary for startup loading. You can
+;;  install themes with M-x package-install.
+;;
+;;    chyla-theme - a white/green theme I prefer a lot
+;;    sublime-themes - a pack of light and dark themes
+;;    cyberpunk-theme - a black theme with high contrast
+;;    dracula-theme - well-known to all
+;;    spacemacs-theme - light and dark theme from Spacemacs
+;;    twilight-bright-theme - one of the most beautiful ways to use light themes
+
+(use-package chyla-theme :ensure t)
+(use-package dracula-theme :ensure t)
+(use-package twilight-bright-theme :ensure t)
+(use-package spacemacs-theme :ensure t)
+
+;;
+;;  To select a theme, enter "M-x customize-themes". A buffer will
+;;  open a long list of themes you can change without leaving Emacs.
+;;
+;;  You can switch between light and dark themes whenever you want.
+
+(defun toggle-theme (theme)
+  (progn
+    (mapcar (lambda (thm) (disable-theme thm)) custom-enabled-themes)
+    (load-theme theme)))
+
+(global-set-key (kbd "<f5>") (lambda () (interactive) (toggle-theme 'dracula)))
+(global-set-key (kbd "<f6>") (lambda () (interactive) (toggle-theme 'chyla)))
+
+;;  Press <f5> or <f6> to switch between your preferred themes (e.g., "Dracula,"
+;;  my personal fav). Unlike other code in this tutorial, this can be directly
+;;  placed in your .emacs file.
+
+;; *** Custom Font
+;;  The small function `set-my-custom-font' globally changes the main font.
+;;  It is a good example of how to write functions and organize Emacs customization.
+
+(defun set-my-custom-font (&rest args)
+  "Set 'default face font.
+   :family - String font name
+   :height - (default 110) String font size
+   :weight - (default 'normal) Symbol can be 'bold | 'normal | 'italic
+   :width  - (default 'normal) Symbol.
+
+  Example
+   (riser/set-my-custom-font
+    :family \"Source Code Pro\"
+    :height 130)
+
+  See also
+    https://www.gnu.org/software/emacs/manual/html_node/elisp/Low_002dLevel-Font.html"
+  (let ((family (plist-get args :family))
+	(height (plist-get args :height))
+	(f-weight (plist-get args :weight))
+	(f-width (plist-get args :width)))
+    (unless family (error "SET-MY-CUSTOM-FONT. Argument `:family' hasn't been set"))
+    (unless height (setq height 110))
+    (unless f-weight (setq f-weight 'normal))
+    (unless f-width (setq f-width 'normal))
+    (set-face-attribute 'default nil
+			:family family
+			:height height
+			:weight f-weight
+			:width f-width)))
+
+(defun customize-font-SourceCodePro ()
+  (interactive)
+  (set-my-custom-font
+   :family "Source Code Pro"))
+
+(defun customize-font-JetBrains ()
+  (interactive)
+  (riser/set-my-custom-font
+   :family "JetBrains Mono"))
+
+;; After making the function `interactive', and compiling it,
+;; you can use it safely with 'M-x' or assign another keybinding.
+
+;;   (global-set-key (kbd "C-z f s") 'customize-font-SourceCodePro)
+;;   (global-set-key (kbd "C-z f j") 'customize-font-JetBrains)
+
+;; -----------------
+;; ** Clojure IDE **
+;; -----------------
+;;   Every Clojurist using Emacs in production has an individual approach to
+;;  streamline routine tasks. Someone prefers fully-featured hints to gather
+;;  as much information about edited file/structure/function as possible
+;;  (sounds like a Perfect Setup).
+;;
+;;   Others enjoy Clojure experience even without an integrated linter or
+;;  noisy completion popup (and that’s also a "Perfect Setup").
+;;
+;;   What's unique is how developers discover the latest packages from
+;;  the universe of melpa/elpa repositories, existing scripts, or stackoverflow
+;;  examples (and ways to manage daily tasks). Prepare for the
+;;  fact that shaping and developing your habits takes time.
+;;
+;;   Returning to the subject, the fastest way to replace your Clojure IDE with
+;;  Emacs Clojure IDE is Clojure LSP.
+;;
+;; *** Clojure LSP
+;;
+;;   First, clojure-lsp uses the 'lsp-mode' package as a client for the
+;;   Language Server Protocol. A well-configured LSP is no worse than  
+;;   any other modern IDE. LSP clients offer more GUI settings, popups,
+;;   and user-friendly tool management.
+;;
+;;   Read more and see how it works through various examples on the technology
+;;   page: https://clojure-lsp.io
+;;
+;;   Install `clojure-lsp` and make sure that it's located in your PATH variable.
+;;
+;; **** Lsp-UI
+;; 
+;;    Modal doc'string reader that usually is used for hinting and showing docs
+;;    in modals. It also contains replacements for two built-in Emacs functions:
+;;
+;;     xref-find-definitions  -> lsp-ui-peek-find-defintions
+;;     xref-find-references   -> lsp-ui-peek-find-references
+;;
+;;    If you plan to use LSP mode daily, I recommend you bind
+;;    these functions to keybindings.
+;;
+;;      (use-package lsp-mode
+;;       ...
+;;       :bind (("M-." . lsp-ui-peek-find-definitions)
+;;              ("M-?" . lsp-ui-peek-find-references))
+;;       ... )
+;;
+;;    Read more: https://emacs-lsp.github.io/lsp-ui/
+
+;; (use-package lsp-ui
+;;   :ensure t)
+
+;; **** Lsp-Mode
+;; 
+;;    The LSP client for invoking without any configuration:
+;;
+;;       M-x lsp
+;;
+;;    Note! The following configuration applies specifically to Clojure.
+;;    Read more:
+;;      https://emacs-lsp.github.io/lsp-mode/page/settings/mode/
+
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :hook ((clojure-mode . lsp)
+;; 	 (clojurec-mode . lsp)
+;; 	 (clojurescript-mode . lsp)
+;; 	 ;; integration with which-key
+;; 	 (lsp-mode . (lambda ()
+;; 		       (let ((lsp-keymap-prefix "C-c l"))
+;; 			 (lsp-enable-which-key-integration)
+;; 			 ;; hide auto-complete modal if
+;; 			 ;; auto-complete package was installed
+;; 			 ;; like we do before
+;; 			 (auto-complete-mode -1)))))
+;;   :config
+;;   ;; Using custom keybind for lsp
+;;   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+;;   ;; hide breadcrumb line on top of the buffer
+;;   (setq lsp-headerline-breadcrumb-enable nil)
+;;   (dolist (m '(clojure-mode
+;; 	       clojurec-mode
+;; 	       clojurescript-mode
+;; 	       clojurex-mode))
+;;     (add-to-list 'lsp-language-id-configuration `(,m . "clojure"))))
